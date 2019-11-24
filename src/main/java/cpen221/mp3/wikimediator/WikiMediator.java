@@ -1,5 +1,7 @@
 package cpen221.mp3.wikimediator;
 
+import fastily.jwiki.core.Wiki;
+
 import java.util.List;
 
 public class WikiMediator {
@@ -16,6 +18,9 @@ public class WikiMediator {
 
      */
 
+    public WikiMediator(){
+        Wiki wiki = new Wiki("en.wikipedia.org");
+    }
     /**
      *
      * @param query
@@ -23,6 +28,7 @@ public class WikiMediator {
      * @return up to limit page titles that match the query
      */
     List<String> simpleSearch(String query, int limit) {
+
         return null;
     }
 
