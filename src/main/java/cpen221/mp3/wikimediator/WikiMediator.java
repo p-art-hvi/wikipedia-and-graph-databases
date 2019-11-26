@@ -37,15 +37,16 @@ public class WikiMediator {
      * @return up to limit page titles that match the query
      */
     public List<String> simpleSearch(String query, int limit) {
-
         List<Calendar> dates = new ArrayList();
+        /**TODO: create helper method for adding to global variables (simpleSearch and getPage)
+         */
         Calendar time = Calendar.getInstance();
         if (requests.containsKey(query)) {
             dates = requests.get(query);
-            dates.add(time);
         }
+        dates.add(time);
         requests.put(query, dates);
-        times.add(time);
+        times.add(time); //is this needed?
 
         return wiki.search(query, limit);
     }
@@ -57,12 +58,13 @@ public class WikiMediator {
      */
     public String getPage(String pageTitle) {
 
+        //add in cache
         Calendar time = Calendar.getInstance();
         List<Calendar> dates = new ArrayList();
         if (requests.containsKey(pageTitle)) {
             dates = requests.get(pageTitle);
-            dates.add(time);
         }
+        dates.add(time);
         requests.put(pageTitle, dates);
         times.add(time);
 
