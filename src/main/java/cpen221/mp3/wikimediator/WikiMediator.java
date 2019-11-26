@@ -19,9 +19,11 @@ public class WikiMediator {
         values like null.
 
      */
+    final long THIRTY_SECONDS = 30000;
+    final long ONE_SECOND = 1000;
     private Wiki wiki;
-    private Map<String, List<Calendar>> requests;
-    private Set<Calendar> times;
+    private Map<String, List<Calendar>> requests = new HashMap<>();
+    private List<Calendar> times = new ArrayList<>(); //do we need this?
     private Cache<Cacheable> cache;
 
     public WikiMediator(){
@@ -34,7 +36,7 @@ public class WikiMediator {
      * @param limit maximum number of pages to return
      * @return up to limit page titles that match the query
      */
-    List<String> simpleSearch(String query, int limit) {
+    public List<String> simpleSearch(String query, int limit) {
 
         List<Calendar> dates = new ArrayList();
         Calendar time = Calendar.getInstance();
@@ -53,7 +55,7 @@ public class WikiMediator {
      * @param pageTitle title of page to search for
      * @return the text associated with the Wikipedia page pageTitle
      */
-    String getPage(String pageTitle) {
+    public String getPage(String pageTitle) {
 
         Calendar time = Calendar.getInstance();
         List<Calendar> dates = new ArrayList();
@@ -74,7 +76,7 @@ public class WikiMediator {
      * @return a list of page titles that can be reached by following up to hops
      *         links starting with pageTitle
      */
-    List<String> getConnectedPages(String pageTitle, int hops) {
+    public List<String> getConnectedPages(String pageTitle, int hops) {
         List<String> connectedPages = new ArrayList<>();
         List<String> connected = wiki.getLinksOnPage(pageTitle);
 
@@ -112,27 +114,11 @@ public class WikiMediator {
     List<String> zeitgeist(int limit) {
 
         Map<String, Integer> common = new HashMap<>();
-        List<String> commonList = new ArrayList<>();
         for (String page : requests.keySet()) {
             common.put(page, requests.get(page).size());
         }
 
-        Integer max = Integer.MIN_VALUE;
-        String mostCommon = null;
-
-        while (commonList.size() <= limit && !common.isEmpty()) {
-            max = Integer.MIN_VALUE;
-            for (String page : common.keySet()) {
-                if (common.get(page) > max) {
-                    max = common.get(page);
-                    mostCommon = page;
-                }
-            }
-            commonList.add(mostCommon);
-            common.remove(mostCommon);
-        }
-
-        return commonList;
+        return mostCommon(limit, common);
     }
 
     /**
@@ -140,8 +126,43 @@ public class WikiMediator {
      * @param limit maximum length of List to return
      * @return most frequent requests in last 30 seconds.  Maximum of limit items
      */
-    List<String> trending(int limit) {
-        return null;
+    public List<String> trending(int limit) {
+        Map<String, Integer> trending = new HashMap<>();
+        Calendar currentTime = Calendar.getInstance();
+
+        for (String page : requests.keySet()) {
+            trending.put(page, requests.get(page).size());
+        }
+
+        for (String page: requests.keySet()) {
+            for (Calendar date: requests.get(page)) {
+                if (date.getTimeInMillis() - currentTime.getTimeInMillis() > THIRTY_SECONDS) {
+                    int num = trending.get(page);
+                    trending.put(page, num - 1);
+                }
+            }
+        }
+
+        return mostCommon(limit, trending);
+    }
+
+    public List<String> mostCommon(int maxNum, Map<String, Integer> trendingMap){
+        List<String> trendingList = new ArrayList<>();
+        Integer max;
+        String mostCommon = null;
+
+        while (trendingList.size() <= maxNum && !trendingList.isEmpty()) {
+            max = Integer.MIN_VALUE;
+            for (String page : trendingMap.keySet()) {
+                if (trendingMap.get(page) > max) {
+                    max = trendingMap.get(page);
+                    mostCommon = page;
+                }
+            }
+            trendingList.add(mostCommon);
+            trendingMap.remove(mostCommon);
+        }
+        return trendingList;
     }
 
     /**
@@ -150,6 +171,36 @@ public class WikiMediator {
      *         Includes all requests made using the public API of WikiMediator
      */
     int peakLoad30s() {
-        return 0;
+        //create list of all Calendar in requests
+        List<Calendar> allSearches = new ArrayList<>();
+        List<Integer> searchNumbers = new ArrayList<>();
+        for (String page: requests.keySet()) {
+            for (Calendar date: requests.get(page)) {
+                allSearches.add(date);
+            }
+        }
+        //check for Calendar firstSearch
+        Collections.sort(allSearches);
+        Calendar firstSearch = allSearches.get(0);
+        //check every 30 second interval current - firstSearch
+        Calendar currentTime = Calendar.getInstance();
+        long interval = currentTime.getTimeInMillis() - THIRTY_SECONDS;
+        for(int round = 0; interval > firstSearch.getTimeInMillis() + THIRTY_SECONDS; round++) {
+            int count = 0;
+            for (Calendar date: allSearches) {
+                long time = date.getTimeInMillis();
+                if (time > interval && time < currentTime.getTimeInMillis() - round * ONE_SECOND) {
+                    count++;
+                }
+            }
+            interval = interval - ONE_SECOND;
+            searchNumbers.add(count);
+        }
+
+        //create List of each int
+        //return max value of List
+        Collections.sort(searchNumbers);
+
+        return searchNumbers.get(searchNumbers.size());
     }
 }
