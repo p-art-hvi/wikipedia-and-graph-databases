@@ -97,7 +97,11 @@ public class Cache<T extends Cacheable> {
      * @return true if successful and false otherwise
      */
     boolean touch(String id) {
-        /* TODO: Implement this method */
+        //update time of the object that has id
+        T element = get(id);
+        for(T t: this.cache.keySet()){
+            
+        }
         return false;
     }
 
@@ -110,7 +114,7 @@ public class Cache<T extends Cacheable> {
      * @return true if successful and false otherwise
      */
     boolean update(T t) {
-        /* TODO: implement this method */
+        //update object by adding new object to map
         return false;
     }
 
