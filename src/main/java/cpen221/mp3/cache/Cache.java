@@ -1,5 +1,8 @@
 package cpen221.mp3.cache;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class Cache<T extends Cacheable> {
 
     /* the default cache size is 32 objects */
@@ -8,8 +11,9 @@ public class Cache<T extends Cacheable> {
     /* the default timeout value is 3600s */
     public static final int DTIMEOUT = 3600;
 
-    /* TODO: Implement this datatype */
-
+    private int capacity;
+    private int timeout;
+    private Map<T, Integer> cache;
     /**
      * Create a cache with a fixed capacity and a timeout value.
      * Objects in the cache that have not been refreshed within the timeout period
@@ -18,15 +22,18 @@ public class Cache<T extends Cacheable> {
      * @param capacity the number of objects the cache can hold
      * @param timeout the duration, in seconds, an object should be in the cache before it times out
      */
-    public Cache(int capacity, int timeout) {
-        // TODO: implement this constructor
+    private Cache(int capacity, int timeout) {
+        this.capacity = capacity;
+        this.timeout = timeout;
+        this.cache = new HashMap<>();
     }
 
     /**
      * Create a cache with default capacity and timeout values.
      */
     public Cache() {
-        this(DSIZE, DTIMEOUT);
+        this.timeout = DTIMEOUT;
+        this.capacity = DSIZE;
     }
 
     /**
@@ -35,7 +42,12 @@ public class Cache<T extends Cacheable> {
      * make room for the new object.
      */
     boolean put(T t) {
-        // TODO: implement this method
+        long time = System.currentTimeMillis();
+        if(this.cache.size() == DSIZE){
+            for(T element: cache.keySet()){
+
+            }
+        }
         return false;
     }
 
@@ -43,11 +55,19 @@ public class Cache<T extends Cacheable> {
      * @param id the identifier of the object to be retrieved
      * @return the object that matches the identifier from the cache
      */
-    T get(String id) {
-        /* TODO: change this */
-        /* Do not return null. Throw a suitable checked exception when an object
-            is not in the cache. */
-        return null;
+    T get(String id){
+        boolean inCache = true;
+        for(T t: cache.keySet()){
+            if(t.id().equals(id)){
+               return t;
+            } else {
+                inCache = false;
+            }
+        }
+        if(!inCache){
+            throw new IllegalArgumentException();
+        }
+       return null;
     }
 
     /**
