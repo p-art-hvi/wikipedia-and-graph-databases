@@ -1,7 +1,6 @@
 package cpen221.mp3.cache;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class Cache<T extends Cacheable> {
 
@@ -13,7 +12,7 @@ public class Cache<T extends Cacheable> {
 
     private int capacity;
     private int timeout;
-    private Map<T, Integer> cache;
+    private Map<T, Long> cache;
     /**
      * Create a cache with a fixed capacity and a timeout value.
      * Objects in the cache that have not been refreshed within the timeout period
@@ -42,11 +41,30 @@ public class Cache<T extends Cacheable> {
      * make room for the new object.
      */
     boolean put(T t) {
-        long time = System.currentTimeMillis();
+        long currentTimeMillis = System.currentTimeMillis();
+        long twelveHrs = 43200;
+        List<Long> timeList = new ArrayList<>();
         if(this.cache.size() == DSIZE){
-            for(T element: cache.keySet()){
-
+            for(T element: this.cache.keySet()){
+                long time = this.cache.get(element);
+                long timeDifference = currentTimeMillis - time;
+                if(timeDifference == twelveHrs) {
+                    this.cache.remove(element, this.cache.get(element));
+                }else{
+                    timeList.add(timeDifference);
+                }
             }
+
+            Collections.sort(timeList);
+
+            long longest = timeList.get(timeList.size() - 1);
+            for(T element: this.cache.keySet()){
+                if(this.cache.get(element) == longest){
+                    this.cache.remove(element, this.cache.get(element));
+                }
+            }
+        }else{
+            this.cache.put(t, this.cache.get(t));
         }
         return false;
     }
