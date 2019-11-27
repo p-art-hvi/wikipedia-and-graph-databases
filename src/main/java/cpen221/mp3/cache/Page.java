@@ -1,32 +1,32 @@
 package cpen221.mp3.cache;
 
 public class Page implements Cacheable {
-    private String title;
-    private String text;
+    private static String title;
+    private static String text;
 
     public Page(String title, String text){
-        this.title = title;
-        this.text = text;
+        Page.title = title;
+        Page.text = text;
     }
 
     public String getTitle(){
-        return this.title;
+        return title;
     }
 
     public String getText(){
-        return this.text;
+        return text;
     }
 
     public void updateTitle(String title){
-        this.title = title;
+        Page.title = title;
     }
 
     public void updateText(String text){
-        this.text = text;
+        Page.text = text;
     }
 
     @Override
     public String id() {
-        return this.title;
+        return title;
     }
 }

@@ -19,12 +19,12 @@ public class WikiMediator {
         values like null.
 
      */
-    final long THIRTY_SECONDS = 30000;
-    final long ONE_SECOND = 1000;
-    private Wiki wiki;
-    private Map<String, List<Calendar>> requests = new HashMap<>();
-    private List<Calendar> times = new ArrayList<>(); //do we need this?
-    private Cache<Cacheable> cache;
+    static final long THIRTY_SECONDS = 30000;
+    static final long ONE_SECOND = 1000;
+    private static Wiki wiki;
+    private static Map<String, List<Calendar>> requests = new HashMap<>();
+    private static List<Calendar> times = new ArrayList<>(); //do we need this?
+    private static Cache<Cacheable> cache;
 
     public WikiMediator(){
         wiki = new Wiki("en.wikipedia.org");
@@ -56,7 +56,7 @@ public class WikiMediator {
      * @param pageTitle title of page to search for
      * @return the text associated with the Wikipedia page pageTitle
      */
-    public String getPage(String pageTitle) {
+    public static String getPage(String pageTitle) {
 
         //add in cache
         Calendar time = Calendar.getInstance();
