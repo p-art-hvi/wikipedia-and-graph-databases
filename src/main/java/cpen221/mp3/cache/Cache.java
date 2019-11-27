@@ -7,11 +7,14 @@ public class Cache<T extends Cacheable> {
     /* the default cache size is 32 objects */
     public static final int DSIZE = 32;
 
+    /*maximum cache size*/
+    public static final int MAXSIZE = 256;
+
     /* the default timeout value is 3600s */
     public static final int DTIMEOUT = 3600;
 
-    private int capacity;
-    private int timeout;
+    private static int capacity;
+    private static int timeout;
     private Map<T, Long> cache;
     /**
      * Create a cache with a fixed capacity and a timeout value.
@@ -33,6 +36,7 @@ public class Cache<T extends Cacheable> {
     public Cache() {
         this.timeout = DTIMEOUT;
         this.capacity = DSIZE;
+        this.cache = new HashMap<>();
     }
 
     /**
@@ -41,15 +45,17 @@ public class Cache<T extends Cacheable> {
      * make room for the new object.
      */
     public boolean put(T t) {
-        long currentTimeMillis = System.currentTimeMillis();
         long twelveHrs = 43200;
         List<Long> timeList = new ArrayList<>();
-        if(this.cache.size() == DSIZE){
+        //if the cache is full then remove the oldest object in the cache
+        if(this.cache.size() == MAXSIZE){
             for(T element: this.cache.keySet()){
                 long time = this.cache.get(element);
-                long timeDifference = currentTimeMillis - time;
+                long timeDifference = System.currentTimeMillis() - time;
                 if(timeDifference == twelveHrs) {
                     this.cache.remove(element, this.cache.get(element));
+                    this.cache.put(t, System.currentTimeMillis());
+                    return true;
                 }else{
                     timeList.add(timeDifference);
                 }
@@ -61,10 +67,13 @@ public class Cache<T extends Cacheable> {
             for(T element: this.cache.keySet()){
                 if(this.cache.get(element) == longest){
                     this.cache.remove(element, this.cache.get(element));
+                    this.cache.put(t, System.currentTimeMillis());
+                    return true;
                 }
             }
         }else{
-            this.cache.put(t, this.cache.get(t));
+            this.cache.put(t, System.currentTimeMillis());
+            return true;
         }
         return false;
     }
@@ -73,7 +82,7 @@ public class Cache<T extends Cacheable> {
      * @param id the identifier of the object to be retrieved
      * @return the object that matches the identifier from the cache
      */
-    T get(String id){
+    public T get(String id){
         boolean inCache = true;
         for(T t: cache.keySet()){
             if(t.id().equals(id)){
@@ -97,12 +106,16 @@ public class Cache<T extends Cacheable> {
      * @return true if successful and false otherwise
      */
     boolean touch(String id) {
-        //update time of the object that has id
+        boolean touch = false;
         T element = get(id);
         for(T t: this.cache.keySet()){
-
+            if(t == element){
+                this.cache.replace(t, this.cache.get(t), System.currentTimeMillis());
+                touch = true;
+            }
         }
-        return false;
+
+        return touch;
     }
 
     /**
@@ -115,7 +128,13 @@ public class Cache<T extends Cacheable> {
      */
     boolean update(T t) {
         //update object by adding new object to map
-        return false;
+        boolean update = false;
+        if(this.cache.containsKey(t)){
+            update = true;
+            this.cache.put(t, System.currentTimeMillis());
+        }
+        return update;
     }
+
 
 }
