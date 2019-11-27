@@ -105,7 +105,7 @@ public class Cache<T extends Cacheable> {
      * @param id the identifier of the object to "touch"
      * @return true if successful and false otherwise
      */
-    boolean touch(String id) {
+    public boolean touch(String id) {
         boolean touch = false;
         T element = get(id);
         for(T t: this.cache.keySet()){
@@ -126,7 +126,7 @@ public class Cache<T extends Cacheable> {
      * @param t the object to update
      * @return true if successful and false otherwise
      */
-    boolean update(T t) {
+    public boolean update(T t) {
         //update object by adding new object to map
         boolean update = false;
         if(this.cache.containsKey(t)){
@@ -136,5 +136,17 @@ public class Cache<T extends Cacheable> {
         return update;
     }
 
+    /*
+    @Override
+    public boolean equals(Object obj) {
+        if(obj instanceof Cache<?>){
+            return ((Cache<?>) obj).hashCode() == hashCode();
+        }
+        return false;
+    }
 
+    public int hashCode() {
+       return this.cache.hashCode();
+    }
+     */
 }
