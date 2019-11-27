@@ -24,7 +24,7 @@ public class Cache<T extends Cacheable> {
      * @param capacity the number of objects the cache can hold
      * @param timeout the duration, in seconds, an object should be in the cache before it times out
      */
-    private Cache(int capacity, int timeout) {
+    public Cache(int capacity, int timeout) {
         this.capacity = capacity;
         this.timeout = timeout;
         this.cache = new HashMap<>();
@@ -39,20 +39,23 @@ public class Cache<T extends Cacheable> {
         this.cache = new HashMap<>();
     }
 
+    public int size(){
+        return this.cache.size();
+    }
     /**
      * Add a value to the cache.
      * If the cache is full then remove the least recently accessed object to
      * make room for the new object.
      */
     public boolean put(T t) {
-        long twelveHrs = 43200;
+        long twelveHrs = 432000;
         List<Long> timeList = new ArrayList<>();
         //if the cache is full then remove the oldest object in the cache
         if(this.cache.size() == MAXSIZE){
             for(T element: this.cache.keySet()){
                 long time = this.cache.get(element);
                 long timeDifference = System.currentTimeMillis() - time;
-                if(timeDifference == twelveHrs) {
+                if(timeDifference >= twelveHrs) {
                     this.cache.remove(element, this.cache.get(element));
                     this.cache.put(t, System.currentTimeMillis());
                     return true;

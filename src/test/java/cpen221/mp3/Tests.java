@@ -8,7 +8,9 @@ import cpen221.mp3.cache.Page;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class Tests {
@@ -161,4 +163,16 @@ public class Tests {
         Assert.assertTrue(cache.update(page10));
     }
 
+    @Test
+    public void testFullCapacity(){
+        Cache<Page> cacheFull = new Cache<>(256, 43200);
+        Integer i = 1;
+        while(cacheFull.size() != 256){
+            Page page = new Page(i.toString(), WikiMediator.getPage(i.toString()));
+            cacheFull.put(page);
+            i++;
+        }
+        Page pageFull = new Page("Dog", WikiMediator.getPage("Dog"));
+        Assert.assertTrue(cacheFull.put(pageFull));
+    }
 }
