@@ -40,7 +40,7 @@ public class Cache<T extends Cacheable> {
      * If the cache is full then remove the least recently accessed object to
      * make room for the new object.
      */
-    boolean put(T t) {
+    public boolean put(T t) {
         long currentTimeMillis = System.currentTimeMillis();
         long twelveHrs = 43200;
         List<Long> timeList = new ArrayList<>();

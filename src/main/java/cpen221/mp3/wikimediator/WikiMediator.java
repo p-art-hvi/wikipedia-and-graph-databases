@@ -2,6 +2,8 @@ package cpen221.mp3.wikimediator;
 
 import cpen221.mp3.cache.Cache;
 import cpen221.mp3.cache.Cacheable;
+
+import cpen221.mp3.cache.Page;
 import fastily.jwiki.core.Wiki;
 
 import java.util.*;
@@ -10,25 +12,26 @@ public class WikiMediator {
 
     /* TODO: Implement this datatype
 
-        You must implement the methods with the exact signatures
-        as provided in the statement for this mini-project.
+            You must implement the methods with the exact signatures
+            as provided in the statement for this mini-project.
 
-        You must add method signatures even for the methods that you
-        do not plan to implement. You should provide skeleton implementation
-        for those methods, and the skeleton implementation could return
-        values like null.
+            You must add method signatures even for the methods that you
+            do not plan to implement. You should provide skeleton implementation
+            for those methods, and the skeleton implementation could return
+            values like null.
 
-     */
-    final long THIRTY_SECONDS = 30000;
-    final long ONE_SECOND = 1000;
-    private Wiki wiki;
-    private Map<String, List<Calendar>> requests = new HashMap<>();
-    private List<Calendar> times = new ArrayList<>(); //do we need this?
-    private Cache<Cacheable> cache;
+         */
+    private final static long THIRTY_SECONDS = 30000;
+    private final static long  ONE_SECOND = 1000;
+    private static Wiki wiki;
+    private static Map<String, List<Calendar>> requests = new HashMap<>();
+   // private List<Calendar> times = new ArrayList<>(); //do we need this?
+    private static Cache<Page> cache = new Cache<>();
 
     public WikiMediator(){
         wiki = new Wiki("en.wikipedia.org");
     }
+
 
     /**
      *
@@ -36,7 +39,7 @@ public class WikiMediator {
      * @param limit maximum number of pages to return
      * @return up to limit page titles that match the query
      */
-    public List<String> simpleSearch(String query, int limit) {
+    public static List<String> simpleSearch(String query, int limit) {
         List<Calendar> dates = new ArrayList();
         /**TODO: create helper method for adding to global variables (simpleSearch and getPage)
          */
@@ -46,7 +49,7 @@ public class WikiMediator {
         }
         dates.add(time);
         requests.put(query, dates);
-        times.add(time); //is this needed?
+       // times.add(time); //is this needed?
 
         return wiki.search(query, limit);
     }
@@ -56,9 +59,10 @@ public class WikiMediator {
      * @param pageTitle title of page to search for
      * @return the text associated with the Wikipedia page pageTitle
      */
-    public String getPage(String pageTitle) {
+    public static String getPage(String pageTitle) {
 
         //add in cache
+
         Calendar time = Calendar.getInstance();
         List<Calendar> dates = new ArrayList();
         if (requests.containsKey(pageTitle)) {
@@ -66,9 +70,12 @@ public class WikiMediator {
         }
         dates.add(time);
         requests.put(pageTitle, dates);
-        times.add(time);
+      //  times.add(time);
 
-        return wiki.getPageText(pageTitle);
+        String pageText = wiki.getPageText(pageTitle);
+        Page page = new Page(pageTitle, pageText);
+       //cache.put(page);
+        return pageText;
     }
 
     /**
@@ -78,21 +85,18 @@ public class WikiMediator {
      * @return a list of page titles that can be reached by following up to hops
      *         links starting with pageTitle
      */
-    public List<String> getConnectedPages(String pageTitle, int hops) {
+    public static List<String> getConnectedPages(String pageTitle, int hops) {
         List<String> connectedPages = new ArrayList<>();
         List<String> connected = wiki.getLinksOnPage(pageTitle);
 
         int linkNumber = 0;
         int listVal = 0;
-        if (hops == 0) {
-            return connectedPages;
-        }
         for (String page: connected) {
             connectedPages.add(page);
         }
         linkNumber++;
 
-        while (linkNumber < hops) {
+        while (linkNumber <= hops) {
             for (int i = listVal; i < connectedPages.size(); i++ ) { //only checks new pages each time
                 List<String> newPages = wiki.getLinksOnPage(connectedPages.get(i));
                 listVal++;
@@ -113,7 +117,7 @@ public class WikiMediator {
      *         Items are sorted in non-increasing count order.  Maximum of limit
      *         items.
      */
-    List<String> zeitgeist(int limit) {
+    public static List<String> zeitgeist(int limit) {
 
         Map<String, Integer> common = new HashMap<>();
         for (String page : requests.keySet()) {
@@ -128,7 +132,7 @@ public class WikiMediator {
      * @param limit maximum length of List to return
      * @return most frequent requests in last 30 seconds.  Maximum of limit items
      */
-    public List<String> trending(int limit) {
+    public static List<String> trending(int limit) {
         Map<String, Integer> trending = new HashMap<>();
         Calendar currentTime = Calendar.getInstance();
 
@@ -148,12 +152,12 @@ public class WikiMediator {
         return mostCommon(limit, trending);
     }
 
-    public List<String> mostCommon(int maxNum, Map<String, Integer> trendingMap){
+    public static List<String> mostCommon(int maxNum, Map<String, Integer> trendingMap){
         List<String> trendingList = new ArrayList<>();
         Integer max;
         String mostCommon = null;
 
-        while (trendingList.size() <= maxNum && !trendingList.isEmpty()) {
+        while (trendingList.size() < maxNum && !trendingMap.isEmpty()) {
             max = Integer.MIN_VALUE;
             for (String page : trendingMap.keySet()) {
                 if (trendingMap.get(page) > max) {
@@ -172,7 +176,7 @@ public class WikiMediator {
      * @return maximum number of requests seen in any 30 second window.
      *         Includes all requests made using the public API of WikiMediator
      */
-    int peakLoad30s() {
+    public static int peakLoad30s() {
         //create list of all Calendar in requests
         List<Calendar> allSearches = new ArrayList<>();
         List<Integer> searchNumbers = new ArrayList<>();
