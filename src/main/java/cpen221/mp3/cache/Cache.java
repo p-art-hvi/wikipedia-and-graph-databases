@@ -12,8 +12,8 @@ public class Cache<T extends Cacheable> {
     /*maximum cache size*/
     public static final int MAXSIZE = 256;
 
-    /* the default timeout value is 3600s */
-    public static final int DTIMEOUT = 3600;
+    /* the default timeout value is 36000ms */
+    public static final int DTIMEOUT = 36000;
 
     private static int capacity;
     private static int timeout;
@@ -83,7 +83,7 @@ public class Cache<T extends Cacheable> {
                 if(timeDifference >= twelveHrs) {
                     this.cache.remove(element, this.cache.get(element));
                     this.cache.put(t, System.currentTimeMillis());
-                    return true;
+                    return this.cache.containsKey(t) && this.cache.containsValue(this.cache.get(t));
                 }else{
                     timeList.add(timeDifference);
                 }
