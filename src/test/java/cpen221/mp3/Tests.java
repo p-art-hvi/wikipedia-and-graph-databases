@@ -71,10 +71,10 @@ public class Tests {
     @Test
     public void getConnectedPagesTest() {
         String pageTitle = "Tun Thura Thet";
-        int expected0 = 20;
-        Assert.assertEquals(expected0, WikiMediator.getConnectedPages(pageTitle, 0).size());
-       // int expected1 = 100;
-       // Assert.assertEquals(expected1, WikiMediator.getConnectedPages(pageTitle, 1).size());
+       // int expected1 = 21;
+        //Assert.assertEquals(expected1, WikiMediator.getConnectedPages(pageTitle, 1).size());
+        int expected2 = 4288;
+        Assert.assertEquals(expected2, WikiMediator.getConnectedPages(pageTitle, 2).size());
     }
 
     @Test
@@ -108,7 +108,7 @@ public class Tests {
 
     }
     @Test
-    public void TrendingTest() {
+    public void TrendingTest() throws InterruptedException {
         WikiMediator.simpleSearch("Moana", 45);
         WikiMediator.simpleSearch("Frozen", 38);
         WikiMediator.simpleSearch("Sleeping Beauty", 17); //1
@@ -118,24 +118,25 @@ public class Tests {
         WikiMediator.getPage("Mulan");
         WikiMediator.getPage("Moana");
         WikiMediator.getPage("Frozen 2"); //1
-
-        WikiMediator.simpleSearch("Moana", 17); //3
+        Thread.sleep(31000);
+        WikiMediator.simpleSearch("Moana", 17); //1
         WikiMediator.simpleSearch("Frozen", 38);
         WikiMediator.simpleSearch("Frozen", 38);
         WikiMediator.simpleSearch("Frozen", 38);
-        WikiMediator.simpleSearch("Frozen", 38);//5
+        WikiMediator.simpleSearch("Frozen", 38);//4
         WikiMediator.getPage("Mulan");
         WikiMediator.getPage("Mulan");
-        WikiMediator.getPage("Mulan"); //4
-        WikiMediator.getPage("Aladdin"); //2
+        WikiMediator.getPage("Mulan"); //3
+        WikiMediator.getPage("Aladdin");
+        WikiMediator.simpleSearch("Aladdin", 45); //2
 
         List<String> expected = new ArrayList<>();
         expected.add("Frozen");
         expected.add("Mulan");
-        expected.add("Moana");
         expected.add("Aladdin");
+        expected.add("Moana");
 
-        Assert.assertEquals(expected, WikiMediator.zeitgeist(4));
+        Assert.assertEquals(expected, WikiMediator.trending(4));
 
     }
 

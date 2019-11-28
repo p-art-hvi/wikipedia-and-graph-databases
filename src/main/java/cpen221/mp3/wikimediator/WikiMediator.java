@@ -2,13 +2,12 @@ package cpen221.mp3.wikimediator;
 
 import cpen221.mp3.cache.Cache;
 import cpen221.mp3.cache.Cacheable;
-
-import cpen221.mp3.cache.Page;
 import fastily.jwiki.core.Wiki;
 
 import java.util.*;
 
 public class WikiMediator {
+
 
     /* TODO: Implement this datatype
 
@@ -21,17 +20,16 @@ public class WikiMediator {
             values like null.
 
          */
-    private final static long THIRTY_SECONDS = 30000;
-    private final static long  ONE_SECOND = 1000;
+    final static long THIRTY_SECONDS = 30000;
+    final static long ONE_SECOND = 1000;
     private static Wiki wiki;
     private static Map<String, List<Calendar>> requests = new HashMap<>();
-   // private List<Calendar> times = new ArrayList<>(); //do we need this?
-    private static Cache<Page> cache = new Cache<>();
+    private static List<Calendar> times = new ArrayList<>(); //do we need this?
+    private static Cache<Cacheable> cache;
 
     public WikiMediator(){
         wiki = new Wiki("en.wikipedia.org");
     }
-
 
     /**
      *
@@ -49,7 +47,7 @@ public class WikiMediator {
         }
         dates.add(time);
         requests.put(query, dates);
-       // times.add(time); //is this needed?
+        times.add(time); //is this needed?
 
         return wiki.search(query, limit);
     }
@@ -62,7 +60,6 @@ public class WikiMediator {
     public static String getPage(String pageTitle) {
 
         //add in cache
-
         Calendar time = Calendar.getInstance();
         List<Calendar> dates = new ArrayList();
         if (requests.containsKey(pageTitle)) {
@@ -70,12 +67,9 @@ public class WikiMediator {
         }
         dates.add(time);
         requests.put(pageTitle, dates);
-      //  times.add(time);
+        times.add(time);
 
-        String pageText = wiki.getPageText(pageTitle);
-        Page page = new Page(pageTitle, pageText);
-       //cache.put(page);
-        return pageText;
+        return wiki.getPageText(pageTitle);
     }
 
     /**
@@ -88,16 +82,21 @@ public class WikiMediator {
     public static List<String> getConnectedPages(String pageTitle, int hops) {
         List<String> connectedPages = new ArrayList<>();
         List<String> connected = wiki.getLinksOnPage(pageTitle);
+        connectedPages.add(pageTitle);
 
         int linkNumber = 0;
-        int listVal = 0;
+        int listVal = 1;
+        if (hops == 0) {
+            return connectedPages;
+        }
         for (String page: connected) {
             connectedPages.add(page);
         }
         linkNumber++;
+        int size = connectedPages.size();
 
-        while (linkNumber <= hops) {
-            for (int i = listVal; i < connectedPages.size(); i++ ) { //only checks new pages each time
+        while (linkNumber < hops) {
+            for (int i = listVal; i < size; i++ ) { //only checks new pages each time
                 List<String> newPages = wiki.getLinksOnPage(connectedPages.get(i));
                 listVal++;
                 for(String page1: newPages) {
@@ -105,6 +104,7 @@ public class WikiMediator {
                 }
             }
             linkNumber++;
+            size = connectedPages.size();
         }
 
         return connectedPages;
@@ -134,7 +134,7 @@ public class WikiMediator {
      */
     public static List<String> trending(int limit) {
         Map<String, Integer> trending = new HashMap<>();
-        Calendar currentTime = Calendar.getInstance();
+        Long currentTime = Calendar.getInstance().getTimeInMillis();
 
         for (String page : requests.keySet()) {
             trending.put(page, requests.get(page).size());
@@ -142,7 +142,8 @@ public class WikiMediator {
 
         for (String page: requests.keySet()) {
             for (Calendar date: requests.get(page)) {
-                if (date.getTimeInMillis() - currentTime.getTimeInMillis() > THIRTY_SECONDS) {
+                long dateTime = date.getTimeInMillis();
+                if (currentTime - dateTime > THIRTY_SECONDS) {
                     int num = trending.get(page);
                     trending.put(page, num - 1);
                 }
@@ -176,7 +177,7 @@ public class WikiMediator {
      * @return maximum number of requests seen in any 30 second window.
      *         Includes all requests made using the public API of WikiMediator
      */
-    public static int peakLoad30s() {
+    int peakLoad30s() {
         //create list of all Calendar in requests
         List<Calendar> allSearches = new ArrayList<>();
         List<Integer> searchNumbers = new ArrayList<>();
