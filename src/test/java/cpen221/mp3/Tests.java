@@ -240,8 +240,18 @@ public class Tests {
 
     }
 
-
-
+    @Test
+    public void testFullCapacity(){
+        Cache<Page> fullCache = new Cache<>(256, 43200);
+        Integer i = 1;
+        while(fullCache.size() < 256){
+            Page page = new Page(i.toString(), WikiMediator.getPage(i.toString()));
+            Assert.assertTrue(fullCache.put(page));
+            i++;
+        }
+        Page page = new Page("Puppy", WikiMediator.getPage("Puppy"));
+        Assert.assertTrue(fullCache.put(page));
+    }
 
     /*
     @Test

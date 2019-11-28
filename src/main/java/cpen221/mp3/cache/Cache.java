@@ -96,14 +96,12 @@ public class Cache<T extends Cacheable> {
                 if(this.cache.get(element) == longest){
                     this.cache.remove(element, this.cache.get(element));
                     this.cache.put(t, System.currentTimeMillis());
-                    return true;
+                    return this.cache.containsKey(t) && this.cache.containsValue(this.cache.get(t));
                 }
             }
-        }else{
-            this.cache.put(t, System.currentTimeMillis());
-            return true;
         }
-        return true;
+            this.cache.put(t, System.currentTimeMillis());
+            return this.cache.containsKey(t) && this.cache.containsValue(this.cache.get(t));
     }
 
     /**
