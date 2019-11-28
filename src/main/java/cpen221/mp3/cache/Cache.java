@@ -1,6 +1,8 @@
 package cpen221.mp3.cache;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 public class Cache<T extends Cacheable> {
 
@@ -15,28 +17,51 @@ public class Cache<T extends Cacheable> {
 
     private static int capacity;
     private static int timeout;
-    private Map<T, Long> cache;
+    private ConcurrentMap<T, Long> cache;
     /**
      * Create a cache with a fixed capacity and a timeout value.
      * Objects in the cache that have not been refreshed within the timeout period
      * are removed from the cache.
      *
-     * @param capacity the number of objects the cache can hold
-     * @param timeout the duration, in seconds, an object should be in the cache before it times out
+     * @param cap the number of objects the cache can hold
+     * @param tOut the duration, in seconds, an object should be in the cache before it times out
      */
-    public Cache(int capacity, int timeout) {
-        this.capacity = capacity;
-        this.timeout = timeout;
-        this.cache = new HashMap<>();
+    public Cache(int cap, int tOut) {
+        capacity = cap;
+        timeout = tOut;
+        this.cache = new ConcurrentHashMap<>();
+        removeOldElements();
     }
 
     /**
      * Create a cache with default capacity and timeout values.
      */
     public Cache() {
-        this.timeout = DTIMEOUT;
-        this.capacity = DSIZE;
-        this.cache = new HashMap<>();
+        timeout = DTIMEOUT;
+        capacity = DSIZE;
+        this.cache = new ConcurrentHashMap<>();
+        removeOldElements();
+    }
+
+    private void removeOldElements() {
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run(){
+                long previous = -1;
+                while(true){
+                    long recent = System.currentTimeMillis();
+                    while(recent - previous >= 10){
+                        previous = recent;
+                        for(T element: cache.keySet()){
+                            if(recent - cache.get(element) >= timeout){
+                                cache.remove(element, cache.get(element));
+                            }
+                        }
+                    }
+                }
+            }
+        });
+        thread.start();
     }
 
     public int size(){
@@ -78,7 +103,7 @@ public class Cache<T extends Cacheable> {
             this.cache.put(t, System.currentTimeMillis());
             return true;
         }
-        return false;
+        return true;
     }
 
     /**

@@ -163,6 +163,9 @@ public class Tests {
         Assert.assertTrue(cache.update(page10));
     }
 
+
+    
+    /*
     @Test
     public void testFullCapacity(){
         Cache<Page> cacheFull = new Cache<>(256, 43200);
@@ -175,4 +178,5 @@ public class Tests {
         Page pageFull = new Page("Dog", WikiMediator.getPage("Dog"));
         Assert.assertTrue(cacheFull.put(pageFull));
     }
+    */
 }
