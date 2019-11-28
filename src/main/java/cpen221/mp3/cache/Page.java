@@ -29,4 +29,14 @@ public class Page implements Cacheable {
     public String id() {
         return title;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if(!(obj instanceof Page)) return false;
+        Page page = (Page) obj;
+        if(title.equals(page.getTitle())){
+            return text.equals(page.getText());
+        }
+        return false;
+    }
 }

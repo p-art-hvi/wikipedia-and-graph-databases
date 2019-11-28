@@ -1,6 +1,8 @@
 package cpen221.mp3.cache;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 public class Cache<T extends Cacheable> {
 
@@ -15,44 +17,70 @@ public class Cache<T extends Cacheable> {
 
     private static int capacity;
     private static int timeout;
-    private Map<T, Long> cache;
+    private ConcurrentMap<T, Long> cache;
     /**
      * Create a cache with a fixed capacity and a timeout value.
      * Objects in the cache that have not been refreshed within the timeout period
      * are removed from the cache.
      *
-     * @param capacity the number of objects the cache can hold
-     * @param timeout the duration, in seconds, an object should be in the cache before it times out
+     * @param cap the number of objects the cache can hold
+     * @param tOut the duration, in seconds, an object should be in the cache before it times out
      */
-    private Cache(int capacity, int timeout) {
-        this.capacity = capacity;
-        this.timeout = timeout;
-        this.cache = new HashMap<>();
+    public Cache(int cap, int tOut) {
+        capacity = cap;
+        timeout = tOut;
+        this.cache = new ConcurrentHashMap<>();
+        removeOldElements();
     }
 
     /**
      * Create a cache with default capacity and timeout values.
      */
     public Cache() {
-        this.timeout = DTIMEOUT;
-        this.capacity = DSIZE;
-        this.cache = new HashMap<>();
+        timeout = DTIMEOUT;
+        capacity = DSIZE;
+        this.cache = new ConcurrentHashMap<>();
+        removeOldElements();
     }
 
+    private void removeOldElements() {
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run(){
+                long previous = -1;
+                while(true){
+                    long recent = System.currentTimeMillis();
+                    while(recent - previous >= 10){
+                        previous = recent;
+                        for(T element: cache.keySet()){
+                            if(recent - cache.get(element) >= timeout){
+                                cache.remove(element, cache.get(element));
+                            }
+                        }
+                    }
+                }
+            }
+        });
+        thread.start();
+    }
+
+    public int size(){
+        return this.cache.size();
+    }
     /**
      * Add a value to the cache.
      * If the cache is full then remove the least recently accessed object to
      * make room for the new object.
      */
     public boolean put(T t) {
-        long twelveHrs = 43200;
+        long twelveHrs = 432000;
         List<Long> timeList = new ArrayList<>();
         //if the cache is full then remove the oldest object in the cache
         if(this.cache.size() == MAXSIZE){
             for(T element: this.cache.keySet()){
                 long time = this.cache.get(element);
                 long timeDifference = System.currentTimeMillis() - time;
-                if(timeDifference == twelveHrs) {
+                if(timeDifference >= twelveHrs) {
                     this.cache.remove(element, this.cache.get(element));
                     this.cache.put(t, System.currentTimeMillis());
                     return true;
@@ -75,7 +103,7 @@ public class Cache<T extends Cacheable> {
             this.cache.put(t, System.currentTimeMillis());
             return true;
         }
-        return false;
+        return true;
     }
 
     /**
@@ -105,7 +133,7 @@ public class Cache<T extends Cacheable> {
      * @param id the identifier of the object to "touch"
      * @return true if successful and false otherwise
      */
-    boolean touch(String id) {
+    public boolean touch(String id) {
         boolean touch = false;
         T element = get(id);
         for(T t: this.cache.keySet()){
@@ -126,7 +154,7 @@ public class Cache<T extends Cacheable> {
      * @param t the object to update
      * @return true if successful and false otherwise
      */
-    boolean update(T t) {
+    public boolean update(T t) {
         //update object by adding new object to map
         boolean update = false;
         if(this.cache.containsKey(t)){
@@ -136,5 +164,17 @@ public class Cache<T extends Cacheable> {
         return update;
     }
 
+    /*
+    @Override
+    public boolean equals(Object obj) {
+        if(obj instanceof Cache<?>){
+            return ((Cache<?>) obj).hashCode() == hashCode();
+        }
+        return false;
+    }
 
+    public int hashCode() {
+       return this.cache.hashCode();
+    }
+     */
 }
