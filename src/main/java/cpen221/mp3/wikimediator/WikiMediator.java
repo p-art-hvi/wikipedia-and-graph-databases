@@ -23,8 +23,8 @@ public class WikiMediator {
     final static long THIRTY_SECONDS = 30000;
     final static long ONE_SECOND = 1000;
     private static Wiki wiki;
-    private static Map<String, List<Calendar>> requests = new HashMap<>();
-    private static List<Calendar> times = new ArrayList<>(); //do we need this?
+    public static Map<String, List<Calendar>> requests = new HashMap<>();
+  //  private static List<Calendar> times = new ArrayList<>(); //do we need this?
     private static Cache<Cacheable> cache;
 
     public WikiMediator(){
@@ -47,7 +47,7 @@ public class WikiMediator {
         }
         dates.add(time);
         requests.put(query, dates);
-        times.add(time); //is this needed?
+        //times.add(time); //is this needed?
 
         return wiki.search(query, limit);
     }
@@ -67,7 +67,7 @@ public class WikiMediator {
         }
         dates.add(time);
         requests.put(pageTitle, dates);
-        times.add(time);
+       // times.add(time);
 
         return wiki.getPageText(pageTitle);
     }
@@ -177,26 +177,25 @@ public class WikiMediator {
      * @return maximum number of requests seen in any 30 second window.
      *         Includes all requests made using the public API of WikiMediator
      */
-    int peakLoad30s() {
+    static public int peakLoad30s() {
         //create list of all Calendar in requests
-        List<Calendar> allSearches = new ArrayList<>();
+        List<Long> allSearches = new ArrayList<>();
         List<Integer> searchNumbers = new ArrayList<>();
         for (String page: requests.keySet()) {
             for (Calendar date: requests.get(page)) {
-                allSearches.add(date);
+                allSearches.add(date.getTimeInMillis());
             }
         }
         //check for Calendar firstSearch
         Collections.sort(allSearches);
-        Calendar firstSearch = allSearches.get(0);
+        long firstSearch = allSearches.get(0);
         //check every 30 second interval current - firstSearch
-        Calendar currentTime = Calendar.getInstance();
-        long interval = currentTime.getTimeInMillis() - THIRTY_SECONDS;
-        for(int round = 0; interval > firstSearch.getTimeInMillis() + THIRTY_SECONDS; round++) {
+        long currentTime = Calendar.getInstance().getTimeInMillis();
+        long interval = currentTime - THIRTY_SECONDS;
+        for(int round = 0; interval > firstSearch; round++) {
             int count = 0;
-            for (Calendar date: allSearches) {
-                long time = date.getTimeInMillis();
-                if (time > interval && time < currentTime.getTimeInMillis() - round * ONE_SECOND) {
+            for (Long time: allSearches) {
+                if (time > interval && time < currentTime - round * ONE_SECOND) {
                     count++;
                 }
             }
@@ -208,6 +207,6 @@ public class WikiMediator {
         //return max value of List
         Collections.sort(searchNumbers);
 
-        return searchNumbers.get(searchNumbers.size());
+        return searchNumbers.get(searchNumbers.size() - 1);
     }
 }
