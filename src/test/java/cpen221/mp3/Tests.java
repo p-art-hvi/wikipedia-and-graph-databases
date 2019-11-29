@@ -186,9 +186,9 @@ public class Tests {
         Assert.assertEquals(page5, cache.get(page5.getTitle()));
         Assert.assertEquals(page6, cache.get(page6.getTitle()));
         Assert.assertEquals(page7, cache.get(page7.getTitle()));
-        Assert.assertEquals(page7, cache.get(page8.getTitle()));
-        Assert.assertEquals(page7, cache.get(page9.getTitle()));
-        Assert.assertEquals(page7, cache.get(page10.getTitle()));
+        Assert.assertEquals(page8, cache.get(page8.getTitle()));
+        Assert.assertEquals(page9, cache.get(page9.getTitle()));
+        Assert.assertEquals(page10, cache.get(page10.getTitle()));
 
         Assert.assertTrue(cache.touch(page1.getTitle()));
         Assert.assertTrue(cache.touch(page2.getTitle()));
@@ -201,7 +201,7 @@ public class Tests {
         Assert.assertTrue(cache.touch(page9.getTitle()));
         Assert.assertTrue(cache.touch(page10.getTitle()));
     }
-/*
+
     @Test
     public void testCacheUpdate1(){
         Page page1 = new Page("Cranium");
@@ -235,9 +235,9 @@ public class Tests {
         Assert.assertEquals(page5, cache.get(page5.getTitle()));
         Assert.assertEquals(page6, cache.get(page6.getTitle()));
         Assert.assertEquals(page7, cache.get(page7.getTitle()));
-        Assert.assertEquals(page7, cache.get(page8.getTitle()));
-        Assert.assertEquals(page7, cache.get(page9.getTitle()));
-        Assert.assertEquals(page7, cache.get(page10.getTitle()));
+        Assert.assertEquals(page8, cache.get(page8.getTitle()));
+        Assert.assertEquals(page9, cache.get(page9.getTitle()));
+        Assert.assertEquals(page10, cache.get(page10.getTitle()));
 
         Assert.assertTrue(cache.touch(page1.getTitle()));
         Assert.assertTrue(cache.touch(page2.getTitle()));
@@ -260,7 +260,7 @@ public class Tests {
         Assert.assertTrue(cache.update(page8));
         Assert.assertTrue(cache.update(page9));
         Assert.assertTrue(cache.update(page10));
-    } */
+    }
 
     @Test
     public void getConnectedPagesTest() {
@@ -354,14 +354,28 @@ public class Tests {
     }
 }
 
-   /* @Test
+    /*
+    @Test
+    public void testFullCapacity1(){
+        WikiMediator wiki = new WikiMediator();
+        Cache<Page> fullCache = new Cache<>(1, 2);
+        Page page1 = new Page("Lobster");
+        Page page2 = new Page("Shrimp");
+        Assert.assertTrue(fullCache.put(page1));
+        Assert.assertTrue(fullCache.put(page2));
+    }
+
+    @Test
     public void testFullCapacity(){
+        WikiMediator wiki = new WikiMediator();
         Cache<Page> fullCache = new Cache<>(256, 432000);
         Integer i = 1;
         while(fullCache.size() != 256){
-            Page page = new Page(i.toString(), WikiMediator.getPage(i.toString()));
+            Page page = new Page(i.toString());
             fullCache.put(page);
             i++;
         }
-        Page page = new Page("Puppy", WikiMediator.getPage("Puppy"));
-        Assert.assertTrue(fullCache.put(page));*/
+        Page page = new Page("Puppy");
+        Assert.assertTrue(fullCache.put(page));
+}
+  */
