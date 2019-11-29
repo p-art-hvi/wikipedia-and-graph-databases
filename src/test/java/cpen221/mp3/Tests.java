@@ -21,11 +21,11 @@ import java.util.Map;
 
 public class Tests {
 
-   // WikiMediator wiki = new WikiMediator(); // this creates the wiki for the tests
+    // WikiMediator wiki = new WikiMediator(); // this creates the wiki for the tests
     @Test
     public void peakLoadTest() throws InterruptedException {
         WikiMediator wiki = new WikiMediator();
-       // wiki.requests.clear(); //BUT should this be needed?
+        // wiki.requests.clear(); //BUT should this be needed?
         wiki.simpleSearch("Moana", 45);
         wiki.simpleSearch("Frozen", 38);
         Thread.sleep(20000);
@@ -52,10 +52,11 @@ public class Tests {
         Assert.assertEquals(expected, wiki.peakLoad30s());
 
     }
+
     @Test
     public void peakLoadTest1() throws InterruptedException {
         WikiMediator wiki = new WikiMediator();
-       // WikiMediator.requests.clear();
+        // WikiMediator.requests.clear();
         wiki.simpleSearch("Moana", 45);
         wiki.simpleSearch("Frozen", 38);
         wiki.simpleSearch("Sleeping Beauty", 17); //1
@@ -64,20 +65,51 @@ public class Tests {
         wiki.getPage("Aladdin");
         wiki.getPage("Mulan");
         wiki.getPage("Moana");
-       // Thread.sleep(30);
+        // Thread.sleep(30);
         wiki.getPage("Frozen 2"); //
         wiki.simpleSearch("Moana", 17); //3
         wiki.simpleSearch("Frozen", 38);
         wiki.simpleSearch("Frozen", 38);
         wiki.simpleSearch("Frozen", 38);
         wiki.simpleSearch("Frozen", 38);//5
-        Thread.sleep(31000);
+        Thread.sleep(2900);
         wiki.getPage("Mulan");
         wiki.getPage("Mulan");
         wiki.getPage("Mulan"); //4
         wiki.getPage("Aladdin"); //2
 
-        int expected = 14;
+        int expected = 18;
+        Assert.assertEquals(expected, wiki.peakLoad30s());
+
+    }
+
+    @Test
+    public void peakLoadTest2() throws InterruptedException {
+        WikiMediator wiki = new WikiMediator();
+        // WikiMediator.requests.clear();
+        wiki.simpleSearch("Moana", 45);
+        wiki.simpleSearch("Frozen", 38);
+        wiki.simpleSearch("Sleeping Beauty", 17); //1
+        wiki.simpleSearch("Tangled", 100); //1
+        wiki.simpleSearch("The Little Mermaid", 67); //1
+        wiki.getPage("Aladdin");
+        wiki.simpleSearch("Frozen", 3);
+        wiki.getPage("Mulan");
+        wiki.getPage("Moana");
+        //Thread.sleep(30090);
+        wiki.getPage("Frozen 2"); //
+        wiki.simpleSearch("Moana", 17); //3
+        wiki.simpleSearch("Frozen", 38);
+        wiki.simpleSearch("Frozen", 3);
+        wiki.simpleSearch("Frozen", 7);
+        wiki.simpleSearch("Frozen", 9);//5
+        Thread.sleep(38000);
+        wiki.getPage("Mulan");
+        wiki.getPage("Mulan");
+        wiki.getPage("Mulan"); //4
+        wiki.getPage("Aladdin"); //2
+
+        int expected = 15;
         Assert.assertEquals(expected, wiki.peakLoad30s());
 
     }
@@ -85,7 +117,7 @@ public class Tests {
 
 
     @Test
-    public void testCachePutAndGet1(){
+    public void testCachePutAndGet1() {
         WikiMediator wiki = new WikiMediator();
         Page page = new Page("The Time Traveler's Wife");
         Cache<Page> cache = new Cache<>();
@@ -94,7 +126,7 @@ public class Tests {
     }
 
     @Test
-    public void testCachePutAndGet2(){
+    public void testCachePutAndGet2() {
         Page page1 = new Page("Jellyfish");
         Page page2 = new Page("Giant Squid");
         Page page3 = new Page("Octopus");
@@ -123,7 +155,7 @@ public class Tests {
     }
 
     @Test
-    public void testCacheTouch1(){
+    public void testCacheTouch1() {
         Page page1 = new Page("Australian Shepherd");
         Page page2 = new Page("Bernese Mountain Dog");
         Page page3 = new Page("Newfoundland Dog");
@@ -281,6 +313,7 @@ public class Tests {
         Assert.assertEquals(expected, wiki.zeitgeist(4));
 
     }
+
     @Test
     public void TrendingTest() throws InterruptedException {
         WikiMediator wiki = new WikiMediator();
@@ -319,6 +352,7 @@ public class Tests {
         Assert.assertEquals(expected, wiki.trending(4));
 
     }
+}
 
     /*
     @Test
@@ -345,5 +379,3 @@ public class Tests {
         Assert.assertTrue(fullCache.put(page));
 }
   */
-
-}
