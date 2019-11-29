@@ -21,31 +21,32 @@ import java.util.Map;
 
 public class Tests {
 
-    WikiMediator wiki = new WikiMediator(); // this creates the wiki for the tests
+   // WikiMediator wiki = new WikiMediator(); // this creates the wiki for the tests
     @Test
     public void peakLoadTest() throws InterruptedException {
-        WikiMediator.requests.clear(); //BUT should this be needed?
-        WikiMediator.simpleSearch("Moana", 45);
-        WikiMediator.simpleSearch("Frozen", 38);
+        WikiMediator wiki = new WikiMediator();
+       // wiki.requests.clear(); //BUT should this be needed?
+        wiki.simpleSearch("Moana", 45);
+        wiki.simpleSearch("Frozen", 38);
         Thread.sleep(20000);
-        WikiMediator.simpleSearch("Sleeping Beauty", 17); //1
-        WikiMediator.simpleSearch("Tangled", 100); //1
-        WikiMediator.simpleSearch("The Little Mermaid", 67); //1
+        wiki.simpleSearch("Sleeping Beauty", 17); //1
+        wiki.simpleSearch("Tangled", 100); //1
+        wiki.simpleSearch("The Little Mermaid", 67); //1
         Thread.sleep(9000);
-        WikiMediator.getPage("Aladdin");
-        WikiMediator.getPage("Mulan");
-        WikiMediator.getPage("Moana");
+        wiki.getPage("Aladdin");
+        wiki.getPage("Mulan");
+        wiki.getPage("Moana");
         Thread.sleep(30030);
-        WikiMediator.getPage("Frozen 2"); //1
-        WikiMediator.simpleSearch("Moana", 17); //3
-        WikiMediator.simpleSearch("Frozen", 38);
-        WikiMediator.simpleSearch("Frozen", 38);
-        WikiMediator.simpleSearch("Frozen", 38);
-        WikiMediator.simpleSearch("Frozen", 38);//5
-        WikiMediator.getPage("Mulan");
-        WikiMediator.getPage("Mulan");
-        WikiMediator.getPage("Mulan"); //4
-        WikiMediator.getPage("Aladdin"); //2
+        wiki.getPage("Frozen 2"); //
+        wiki.simpleSearch("Moana", 17); //3
+        wiki.simpleSearch("Frozen", 38);
+        wiki.simpleSearch("Frozen", 38);
+        wiki.simpleSearch("Frozen", 38);
+        wiki.simpleSearch("Frozen", 38);//5
+        wiki.getPage("Mulan");
+        wiki.getPage("Mulan");
+        wiki.getPage("Mulan"); //4
+        wiki.getPage("Aladdin"); //2
 
         int expected = 10;
         Assert.assertEquals(expected, wiki.peakLoad30s());
@@ -53,27 +54,28 @@ public class Tests {
     }
     @Test
     public void peakLoadTest1() throws InterruptedException {
-        WikiMediator.requests.clear();
-        WikiMediator.simpleSearch("Moana", 45);
-        WikiMediator.simpleSearch("Frozen", 38);
-        WikiMediator.simpleSearch("Sleeping Beauty", 17); //1
-        WikiMediator.simpleSearch("Tangled", 100); //1
-        WikiMediator.simpleSearch("The Little Mermaid", 67); //1
-        WikiMediator.getPage("Aladdin");
-        WikiMediator.getPage("Mulan");
-        WikiMediator.getPage("Moana");
-        Thread.sleep(30);
-        WikiMediator.getPage("Frozen 2"); //1
-        WikiMediator.simpleSearch("Moana", 17); //3
-        WikiMediator.simpleSearch("Frozen", 38);
-        WikiMediator.simpleSearch("Frozen", 38);
-        WikiMediator.simpleSearch("Frozen", 38);
-        WikiMediator.simpleSearch("Frozen", 38);//5
+        WikiMediator wiki = new WikiMediator();
+       // WikiMediator.requests.clear();
+        wiki.simpleSearch("Moana", 45);
+        wiki.simpleSearch("Frozen", 38);
+        wiki.simpleSearch("Sleeping Beauty", 17); //1
+        wiki.simpleSearch("Tangled", 100); //1
+        wiki.simpleSearch("The Little Mermaid", 67); //1
+        wiki.getPage("Aladdin");
+        wiki.getPage("Mulan");
+        wiki.getPage("Moana");
+       // Thread.sleep(30);
+        wiki.getPage("Frozen 2"); //
+        wiki.simpleSearch("Moana", 17); //3
+        wiki.simpleSearch("Frozen", 38);
+        wiki.simpleSearch("Frozen", 38);
+        wiki.simpleSearch("Frozen", 38);
+        wiki.simpleSearch("Frozen", 38);//5
         Thread.sleep(31000);
-        WikiMediator.getPage("Mulan");
-        WikiMediator.getPage("Mulan");
-        WikiMediator.getPage("Mulan"); //4
-        WikiMediator.getPage("Aladdin"); //2
+        wiki.getPage("Mulan");
+        wiki.getPage("Mulan");
+        wiki.getPage("Mulan"); //4
+        wiki.getPage("Aladdin"); //2
 
         int expected = 14;
         Assert.assertEquals(expected, wiki.peakLoad30s());
@@ -84,7 +86,8 @@ public class Tests {
 
     @Test
     public void testCachePutAndGet1(){
-        Page page = new Page("The Time Traveler's Wife", WikiMediator.getPage("The Time Traveler's Wife"));
+        WikiMediator wiki = new WikiMediator();
+        Page page = new Page("The Time Traveler's Wife");
         Cache<Page> cache = new Cache<>();
         Assert.assertTrue(cache.put(page));
         Assert.assertEquals(page, cache.get(page.getTitle()));
@@ -92,13 +95,13 @@ public class Tests {
 
     @Test
     public void testCachePutAndGet2(){
-        Page page1 = new Page("Jellyfish", WikiMediator.getPage("Jellyfish"));
-        Page page2 = new Page("Giant Squid", WikiMediator.getPage("Giant Squid"));
-        Page page3 = new Page("Octopus", WikiMediator.getPage("Octopus"));
-        Page page4 = new Page("Lobster", WikiMediator.getPage("Lobster"));
-        Page page5 = new Page("Hermit Crab", WikiMediator.getPage("Hermit Crab"));
-        Page page6 = new Page("Sea Cucumber", WikiMediator.getPage("Sea Cucumber"));
-        Page page7 = new Page("Starfish", WikiMediator.getPage("Starfish"));
+        Page page1 = new Page("Jellyfish");
+        Page page2 = new Page("Giant Squid");
+        Page page3 = new Page("Octopus");
+        Page page4 = new Page("Lobster");
+        Page page5 = new Page("Hermit Crab");
+        Page page6 = new Page("Sea Cucumber");
+        Page page7 = new Page("Starfish");
 
         Cache<Page> cache = new Cache<>();
 
@@ -121,16 +124,16 @@ public class Tests {
 
     @Test
     public void testCacheTouch1(){
-        Page page1 = new Page("Australian Shepherd", WikiMediator.getPage("Australian Shepherd"));
-        Page page2 = new Page("Bernese Mountain Dog", WikiMediator.getPage("Bernese Mountain Dog"));
-        Page page3 = new Page("Newfoundland Dog", WikiMediator.getPage("Newfoundland Dog"));
-        Page page4 = new Page("Chow chow", WikiMediator.getPage("Chow chow"));
-        Page page5 = new Page("St. Bernard", WikiMediator.getPage("St. Bernard"));
-        Page page6 = new Page("Afghan Hound", WikiMediator.getPage("Afghan Hound"));
-        Page page7 = new Page("Samoyed", WikiMediator.getPage("Samoyed"));
-        Page page8 = new Page("Rottweiler", WikiMediator.getPage("Rottweiler"));
-        Page page9 = new Page("Great Dane", WikiMediator.getPage("Great Dane"));
-        Page page10 = new Page("Alaskan Malamute", WikiMediator.getPage("Alaskan Malamute"));
+        Page page1 = new Page("Australian Shepherd");
+        Page page2 = new Page("Bernese Mountain Dog");
+        Page page3 = new Page("Newfoundland Dog");
+        Page page4 = new Page("Chow chow");
+        Page page5 = new Page("St. Bernard");
+        Page page6 = new Page("Afghan Hound");
+        Page page7 = new Page("Samoyed");
+        Page page8 = new Page("Rottweiler");
+        Page page9 = new Page("Great Dane");
+        Page page10 = new Page("Alaskan Malamute");
 
         Cache<Page> cache = new Cache<>();
 
@@ -167,19 +170,19 @@ public class Tests {
         Assert.assertTrue(cache.touch(page9.getTitle()));
         Assert.assertTrue(cache.touch(page10.getTitle()));
     }
-
+/*
     @Test
     public void testCacheUpdate1(){
-        Page page1 = new Page("Cranium", WikiMediator.getPage("Cranium"));
-        Page page2 = new Page("Mandible", WikiMediator.getPage("Mandible"));
-        Page page3 = new Page("Clavical", WikiMediator.getPage("Clavical"));
-        Page page4 = new Page("Sternum", WikiMediator.getPage("Sternum"));
-        Page page5 = new Page("Humerus", WikiMediator.getPage("Humerus"));
-        Page page6 = new Page("Ribs", WikiMediator.getPage("Ribs"));
-        Page page7 = new Page("Vertebrae", WikiMediator.getPage("Vertebrae"));
-        Page page8 = new Page("Pelvis", WikiMediator.getPage("Pelvis"));
-        Page page9 = new Page("Carpals", WikiMediator.getPage("Carpals"));
-        Page page10 = new Page("Tibia", WikiMediator.getPage("Tibia"));
+        Page page1 = new Page("Cranium");
+        Page page2 = new Page("Mandible");
+        Page page3 = new Page("Clavical");
+        Page page4 = new Page("Sternum");
+        Page page5 = new Page("Humerus");
+        Page page6 = new Page("Ribs");
+        Page page7 = new Page("Vertebrae");
+        Page page8 = new Page("Pelvis");
+        Page page9 = new Page("Carpals");
+        Page page10 = new Page("Tibia");
 
         Cache<Page> cache = new Cache<>();
 
@@ -226,10 +229,12 @@ public class Tests {
         Assert.assertTrue(cache.update(page8));
         Assert.assertTrue(cache.update(page9));
         Assert.assertTrue(cache.update(page10));
-    }
+    } */
+
     @Test
     public void getConnectedPagesTest() {
         String pageTitle = "Tun Thura Thet";
+        WikiMediator wiki = new WikiMediator();
         int expected0 = 1;
         Assert.assertEquals(expected0, wiki.getConnectedPages(pageTitle, 0).size());
         int expected1 = 21;
@@ -239,25 +244,33 @@ public class Tests {
     }
 
     @Test
+    public void testSimpleSearch() {
+        WikiMediator wiki = new WikiMediator();
+        wiki.getPage("Moana");
+    }
+    @Test
     public void ZeitgeistTest() {
-        WikiMediator.simpleSearch("Moana", 45);
-        WikiMediator.simpleSearch("Frozen", 38);
-        WikiMediator.simpleSearch("Sleeping Beauty", 17); //1
-        WikiMediator.simpleSearch("Tangled", 100); //1
-        WikiMediator.simpleSearch("The Little Mermaid", 67); //1
-        WikiMediator.getPage("Aladdin");
-        WikiMediator.getPage("Mulan");
-        WikiMediator.getPage("Moana");
-        WikiMediator.getPage("Frozen 2"); //1
-        WikiMediator.simpleSearch("Moana", 17); //3
-        WikiMediator.simpleSearch("Frozen", 38);
-        WikiMediator.simpleSearch("Frozen", 38);
-        WikiMediator.simpleSearch("Frozen", 38);
-        WikiMediator.simpleSearch("Frozen", 38);//5
-        WikiMediator.getPage("Mulan");
-        WikiMediator.getPage("Mulan");
-        WikiMediator.getPage("Mulan"); //4
-        WikiMediator.getPage("Aladdin"); //2
+        WikiMediator wiki = new WikiMediator();
+        //wiki.requests.clear(); //BUT should this be needed?
+        wiki.simpleSearch("Moana", 4);
+        wiki.simpleSearch("Frozen", 38);
+        wiki.simpleSearch("Sleeping Beauty", 17); //1
+        wiki.simpleSearch("Tangled", 100); //1
+        wiki.simpleSearch("The Little Mermaid", 67); //1
+        wiki.getPage("Aladdin");
+        wiki.getPage("Mulan");
+        wiki.getPage("Moana");
+        wiki.getPage("Frozen 2"); //
+        wiki.simpleSearch("Moana", 17); //3
+        wiki.simpleSearch("Frozen", 38);
+        wiki.simpleSearch("Frozen", 38);
+        wiki.simpleSearch("Frozen", 38);
+        wiki.simpleSearch("Frozen", 38);//5
+        wiki.getPage("Mulan");
+        wiki.getPage("Mulan");
+        wiki.getPage("Mulan"); //4
+        wiki.getPage("Aladdin"); //2
+
 
         List<String> expected = new ArrayList<>();
         expected.add("Frozen");
@@ -270,26 +283,32 @@ public class Tests {
     }
     @Test
     public void TrendingTest() throws InterruptedException {
-        WikiMediator.simpleSearch("Moana", 45);
-        WikiMediator.simpleSearch("Frozen", 38);
-        WikiMediator.simpleSearch("Sleeping Beauty", 17); //1
-        WikiMediator.simpleSearch("Tangled", 100); //1
-        WikiMediator.simpleSearch("The Little Mermaid", 67); //1
-        WikiMediator.getPage("Aladdin");
-        WikiMediator.getPage("Mulan");
-        WikiMediator.getPage("Moana");
-        WikiMediator.getPage("Frozen 2"); //1
+        WikiMediator wiki = new WikiMediator();
+        wiki.requests.clear(); //BUT should this be needed?
+        wiki.simpleSearch("Moana", 45);
+        wiki.simpleSearch("Frozen", 38);
+        wiki.simpleSearch("Sleeping Beauty", 17); //1
+        wiki.simpleSearch("Tangled", 100); //1
+        wiki.simpleSearch("The Little Mermaid", 67); //1
+        wiki.getPage("Aladdin");
+        wiki.getPage("Mulan");
+        wiki.getPage("Moana");
+        wiki.getPage("Frozen 2"); //
+        wiki.getPage("Moana");
+        wiki.getPage("Moana");
+        wiki.getPage("Moana");
         Thread.sleep(31000);
-        WikiMediator.simpleSearch("Moana", 17); //1
-        WikiMediator.simpleSearch("Frozen", 38);
-        WikiMediator.simpleSearch("Frozen", 38);
-        WikiMediator.simpleSearch("Frozen", 38);
-        WikiMediator.simpleSearch("Frozen", 38);//4
-        WikiMediator.getPage("Mulan");
-        WikiMediator.getPage("Mulan");
-        WikiMediator.getPage("Mulan"); //3
-        WikiMediator.getPage("Aladdin");
-        WikiMediator.simpleSearch("Aladdin", 45); //2
+        wiki.simpleSearch("Moana", 17); //3
+        wiki.simpleSearch("Frozen", 38);
+        wiki.simpleSearch("Frozen", 38);
+        wiki.simpleSearch("Frozen", 38);
+        wiki.simpleSearch("Frozen", 38);//5
+        wiki.getPage("Mulan");
+        wiki.getPage("Mulan");
+        wiki.getPage("Aladdin"); //4
+        wiki.getPage("Aladdin"); //2
+        wiki.getPage("Mulan");
+
 
         List<String> expected = new ArrayList<>();
         expected.add("Frozen");
@@ -301,7 +320,7 @@ public class Tests {
 
     }
 
-    @Test
+   /* @Test
     public void testFullCapacity(){
         Cache<Page> fullCache = new Cache<>(256, 432000);
         Integer i = 1;
@@ -312,5 +331,5 @@ public class Tests {
         }
         Page page = new Page("Puppy", WikiMediator.getPage("Puppy"));
         Assert.assertTrue(fullCache.put(page));
-    }
+}
 }

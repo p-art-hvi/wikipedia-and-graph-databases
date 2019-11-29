@@ -1,20 +1,23 @@
 package cpen221.mp3.cache;
 
+import cpen221.mp3.wikimediator.WikiMediator;
+import fastily.jwiki.core.Wiki;
+
 public class Page implements Cacheable {
-    private static String title;
+    public static String title;
     private static String text;
 
-    public Page(String title, String text){
+    public Page(String title){
+        WikiMediator wiki = new WikiMediator();
         Page.title = title;
-        Page.text = text;
+    }
+
+    public String getText(){
+        return WikiMediator.wiki.getPageText(title);
     }
 
     public String getTitle(){
         return title;
-    }
-
-    public String getText(){
-        return text;
     }
 
     public void updateTitle(String title){
