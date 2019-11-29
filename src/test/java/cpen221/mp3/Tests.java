@@ -322,31 +322,14 @@ public class Tests {
 
    /* @Test
     public void testFullCapacity(){
-        Cache<Page> fullCache = new Cache<>(256, 43200);
+        Cache<Page> fullCache = new Cache<>(256, 432000);
         Integer i = 1;
-        while(fullCache.size() < 256){
+        while(fullCache.size() != 256){
             Page page = new Page(i.toString(), WikiMediator.getPage(i.toString()));
-            Assert.assertTrue(fullCache.put(page));
+            fullCache.put(page);
             i++;
         }
         Page page = new Page("Puppy", WikiMediator.getPage("Puppy"));
         Assert.assertTrue(fullCache.put(page));
-    }*/
-
-
-
-    /*
-    @Test
-    public void testFullCapacity(){
-        Cache<Page> cacheFull = new Cache<>(256, 43200);
-        Integer i = 1;
-        while(cacheFull.size() != 256){
-            Page page = new Page(i.toString(), WikiMediator.getPage(i.toString()));
-            cacheFull.put(page);
-            i++;
-        }
-        Page pageFull = new Page("Dog", WikiMediator.getPage("Dog"));
-        Assert.assertTrue(cacheFull.put(pageFull));
-    }
-    */
+}
 }
