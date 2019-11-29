@@ -320,6 +320,17 @@ public class Tests {
 
     }
 
+    /*
+    @Test
+    public void testFullCapacity1(){
+        WikiMediator wiki = new WikiMediator();
+        Cache<Page> fullCache = new Cache<>(1, 2);
+        Page page1 = new Page("Lobster");
+        Page page2 = new Page("Shrimp");
+        Assert.assertTrue(fullCache.put(page1));
+        Assert.assertTrue(fullCache.put(page2));
+    }
+
     @Test
     public void testFullCapacity(){
         WikiMediator wiki = new WikiMediator();
@@ -333,4 +344,6 @@ public class Tests {
         Page page = new Page("Puppy");
         Assert.assertTrue(fullCache.put(page));
 }
+  */
+    
 }
