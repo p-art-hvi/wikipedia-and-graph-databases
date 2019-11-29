@@ -7,13 +7,13 @@ import java.util.concurrent.ConcurrentMap;
 public class Cache<T extends Cacheable> {
 
     /* the default cache size is 32 objects */
-    public static final int DSIZE = 32;
+    private static final int DSIZE = 32;
 
     /*maximum cache size*/
-    public static final int MAXSIZE = 256;
+    private static final int MAXSIZE = 256;
 
-    /* the default timeout value is 36000ms */
-    public static final int DTIMEOUT = 36000;
+    /* the default timeout value is 3600s */
+    private static final int DTIMEOUT = 3600;
 
     private static int capacity;
     private static int timeout;
@@ -25,6 +25,8 @@ public class Cache<T extends Cacheable> {
      *
      * @param cap the number of objects the cache can hold
      * @param tOut the duration, in seconds, an object should be in the cache before it times out
+     * requires: nothing
+     * effects:
      */
     public Cache(int cap, int tOut) {
         capacity = cap;
@@ -35,6 +37,9 @@ public class Cache<T extends Cacheable> {
 
     /**
      * Create a cache with default capacity and timeout values.
+     * If an object has gone stale, it is removed from the cache.
+     * requires:
+     * effects:
      */
     public Cache() {
         timeout = DTIMEOUT;
@@ -43,6 +48,11 @@ public class Cache<T extends Cacheable> {
         removeOldElements();
     }
 
+    /**
+     * Removes stale/old objects from the cache.
+     * requires:
+     * effects:
+     */
     private void removeOldElements() {
         Thread thread = new Thread(new Runnable() {
             @Override
@@ -53,7 +63,7 @@ public class Cache<T extends Cacheable> {
                     while(recent - previous >= 10){
                         previous = recent;
                         for(T element: cache.keySet()){
-                            if(recent - cache.get(element) >= timeout){
+                            if(recent - cache.get(element) >= timeout * 10){
                                 cache.remove(element, cache.get(element));
                             }
                         }
@@ -64,13 +74,13 @@ public class Cache<T extends Cacheable> {
         thread.start();
     }
 
-    public int size(){
-        return this.cache.size();
-    }
     /**
      * Add a value to the cache.
      * If the cache is full then remove the least recently accessed object to
      * make room for the new object.
+     * requires:
+     * effects: returns true if the object has been successfully added to the cache.
+     *          Otherwise, returns false.
      */
     public boolean put(T t) {
         long twelveHrs = 432000;
