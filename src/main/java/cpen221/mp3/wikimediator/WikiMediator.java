@@ -197,16 +197,21 @@ public class WikiMediator {
         Collections.sort(allSearches);
         long firstSearch = allSearches.get(0);
         //check every 30 second interval current - firstSearch
-        long currentTime = Calendar.getInstance().getTimeInMillis();
-        long interval = currentTime - THIRTY_SECONDS;
-        for(int round = 0; interval > firstSearch; round++) {
+        long currentTime = System.currentTimeMillis();
+        long intervalMin = allSearches.get(allSearches.size()-1) - THIRTY_SECONDS;
+        long intervalMax = allSearches.get(allSearches.size()-1);
+        if (intervalMin < firstSearch) {
+            return allSearches.size();
+        }
+        while(intervalMin >= firstSearch) {
             int count = 0;
             for (Long time: allSearches) {
-                if (time > interval && time < currentTime - round * ONE_SECOND) {
+                if (time >= intervalMin && time <= intervalMax) {
                     count++;
                 }
             }
-            interval = interval - ONE_SECOND;
+            intervalMin = intervalMin - ONE_SECOND;
+            intervalMax = intervalMax - ONE_SECOND;
             searchNumbers.add(count);
         }
 
