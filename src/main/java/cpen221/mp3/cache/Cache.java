@@ -5,28 +5,21 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 public class Cache<T extends Cacheable> {
-
-    /* the default cache size is 32 objects */
+    
     private static final int DSIZE = 32;
-
-    /*maximum cache size*/
     private static final int MAXSIZE = 256;
-
-    /* the default timeout value is 3600s */
     private static final int DTIMEOUT = 3600;
 
     private static int capacity;
     private static int timeout;
     private ConcurrentMap<T, Long> cache;
     /**
-     * Create a cache with a fixed capacity and a timeout value.
-     * Objects in the cache that have not been refreshed within the timeout period
-     * are removed from the cache.
-     *
      * @param cap the number of objects the cache can hold
-     * @param tOut the duration, in seconds, an object should be in the cache before it times out
+     * @param tOut the duration, in seconds
      * requires: nothing
-     * effects:
+     * effects: a cache is created with a fixed capacity and a timeout value.
+     *          Objects in the cache that have not been refreshes within the timeout period
+     *          are removed from the cache.
      */
     public Cache(int cap, int tOut) {
         capacity = cap;
@@ -36,10 +29,9 @@ public class Cache<T extends Cacheable> {
     }
 
     /**
-     * Create a cache with default capacity and timeout values.
-     * If an object has gone stale, it is removed from the cache.
-     * requires:
-     * effects:
+     * requires: nothing
+     * effects: a cache is created with default capacity and timeout values.
+     *          Stale objects are removed from the cache.
      */
     public Cache() {
         timeout = DTIMEOUT;
@@ -49,9 +41,8 @@ public class Cache<T extends Cacheable> {
     }
 
     /**
-     * Removes stale/old objects from the cache.
-     * requires:
-     * effects:
+     * requires: nothing
+     * effects: Removes stale/old objects from the cache.
      */
     private void removeOldElements() {
         Thread thread = new Thread(new Runnable() {
@@ -75,17 +66,14 @@ public class Cache<T extends Cacheable> {
     }
 
     /**
-     * Add a value to the cache.
-     * If the cache is full then remove the least recently accessed object to
-     * make room for the new object.
-     * requires:
+     * requires: nothing
      * effects: returns true if the object has been successfully added to the cache.
      *          Otherwise, returns false.
+     *          If the cache is full then the least recently accessed object is removed.
      */
     public boolean put(T t) {
         long twelveHrs = 432000;
         List<Long> timeList = new ArrayList<>();
-        //if the cache is full then remove the oldest object in the cache
         if(this.cache.size() == MAXSIZE){
             for(T element: this.cache.keySet()){
                 long time = this.cache.get(element);
@@ -116,7 +104,11 @@ public class Cache<T extends Cacheable> {
 
     /**
      * @param id the identifier of the object to be retrieved
-     * @return the object that matches the identifier from the cache
+     * requires: nothing
+     * effects:
+     *          @return an object with the appropriate identifier.
+     *          @throws IllegalArgumentException if there is no object
+     *          in the cache with the appropriate id.
      */
     public T get(String id){
         boolean inCache = true;
@@ -134,12 +126,11 @@ public class Cache<T extends Cacheable> {
     }
 
     /**
-     * Update the last refresh time for the object with the provided id.
-     * This method is used to mark an object as "not stale" so that its timeout
-     * is delayed.
-     *
      * @param id the identifier of the object to "touch"
-     * @return true if successful and false otherwise
+     * requires: nothing
+     * effects: An object is marked as "not stale" so that its timeout is delayed.
+     *          @return true if the time for the object with the same identifier as the
+     *          provided id is updated. Otherwise return false.
      */
     public boolean touch(String id) {
         boolean touch = false;
@@ -155,15 +146,13 @@ public class Cache<T extends Cacheable> {
     }
 
     /**
-     * Update an object in the cache.
-     * This method updates an object and acts like a "touch" to renew the
-     * object in the cache.
-     *
      * @param t the object to update
-     * @return true if successful and false otherwise
+     * requires:
+     * effects: An object is updated and renewed in the cache.
+     *          @return true if the object is updated successfully in the cache.
+     *          Otherwise return false.
      */
     public boolean update(T t) {
-        //update object by adding new object to map
         boolean update = false;
         if(this.cache.containsKey(t)){
             update = true;
