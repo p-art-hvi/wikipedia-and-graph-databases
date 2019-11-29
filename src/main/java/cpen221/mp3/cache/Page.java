@@ -4,16 +4,17 @@ import cpen221.mp3.wikimediator.WikiMediator;
 import fastily.jwiki.core.Wiki;
 
 public class Page implements Cacheable {
-    public static String title;
-    private static String text;
+    public String title;
+    private String text;
 
     public Page(String title){
         WikiMediator wiki = new WikiMediator();
-        Page.title = title;
+        this.title = title;
+        this.text = WikiMediator.wiki.getPageText(title);
     }
 
     public String getText(){
-        return WikiMediator.wiki.getPageText(title);
+        return text;
     }
 
     public String getTitle(){
@@ -21,11 +22,11 @@ public class Page implements Cacheable {
     }
 
     public void updateTitle(String title){
-        Page.title = title;
+        this.title = title;
     }
 
-    public void updateText(String text){
-        Page.text = text;
+      public void updateText(String text){
+        this.text = text;
     }
 
     @Override
