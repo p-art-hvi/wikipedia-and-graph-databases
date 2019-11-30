@@ -4,7 +4,18 @@ import cpen221.mp3.wikimediator.WikiMediator;
 import fastily.jwiki.core.Wiki;
 
 public class Page implements Cacheable {
-    
+    /*
+    Representation Invariant:
+    -- page cannot have an empty string for title
+    -- page cannot have a null title
+    -- page cannot have an empty string for text
+    -- page cannot have null text
+    -- page cannot be null
+
+    Abstraction Function:
+    -- title represents the name of the page
+    -- text represents the information provided on the page
+     */
     private String title;
     private String text;
 
