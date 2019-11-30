@@ -6,6 +6,20 @@ import java.util.concurrent.ConcurrentMap;
 
 public class Cache<T extends Cacheable> {
 
+    /*
+    Representation Invariant:
+    -- cache cannot contain null objects
+    -- cache cannot have infinite timeout
+    -- cache can contain <= maximum capacity
+    -- cache cannot contain duplicate objects
+
+    Abstraction Function:
+    -- cache represents a ConcurrentHashMap in which methods add, remove, refresh and renew the objects which it stores.
+       each key is an object and each value is the time, in milliseconds, at which the object was added to the cache
+    -- timeout is the maximum duration, in seconds, for which an object is allowed to remain in the cache
+    -- capacity is the maximum amount of objects that the cache is allowed to hold
+     */
+
     private static final int DSIZE = 32;
     private static final int MAXSIZE = 256;
     private static final int DTIMEOUT = 3600;
@@ -13,6 +27,7 @@ public class Cache<T extends Cacheable> {
     private static int capacity;
     private static int timeout;
     private ConcurrentMap<T, Long> cache;
+
     /**
      * @param cap the number of objects the cache can hold
      * @param tOut the duration, in seconds
@@ -150,9 +165,16 @@ public class Cache<T extends Cacheable> {
         return touch;
     }
 
+    /**
+     * Checks whether the cache contains the object.
+     * @param t is the object to check
+     * @return true if the object is contained in the cache. Otherwise return false.
+     */
     public boolean contains(T t){
         return this.cache.containsKey(t) && this.cache.containsValue(this.cache.get(t));
     }
+
+
     /**
      * An object is updated and renewed in the cache.
      * @param t the object to update
@@ -167,6 +189,10 @@ public class Cache<T extends Cacheable> {
         return update;
     }
 
+    /**
+     * requires: nothing
+     * @return: the size of the cache
+     */
     public int size() {
         return this.cache.size();
     }
