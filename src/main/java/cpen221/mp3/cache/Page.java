@@ -21,7 +21,7 @@ public class Page implements Cacheable {
      * requires: nothing
      * @return the text of the page object.
      */
-    private String getText(){
+    public String getText(){
         return text;
     }
 

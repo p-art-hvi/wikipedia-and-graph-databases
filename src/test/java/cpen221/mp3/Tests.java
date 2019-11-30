@@ -371,7 +371,7 @@ public class Tests {
         cache.get(null);
     }
 
-    @Test
+   /* @Test
     public void testFullCapacity() {
         Cache<Page> fullCache = new Cache<>(256, 432000);
         Integer i = 1;
@@ -382,7 +382,7 @@ public class Tests {
         }
         Page page = new Page("Puppy");
         Assert.assertTrue(fullCache.put(page));
-    }
+    }*/
 }
 
     //testCases to write:
