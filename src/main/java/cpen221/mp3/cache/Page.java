@@ -21,13 +21,13 @@ public class Page implements Cacheable {
         return title;
     }
 
-    public void updateTitle(String title){
+   /* public void updateTitle(String title){
         this.title = title;
     }
 
       public void updateText(String text){
         this.text = text;
-    }
+    }*/
 
     @Override
     public String id() {

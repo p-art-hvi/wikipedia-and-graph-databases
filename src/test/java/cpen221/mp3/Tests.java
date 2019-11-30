@@ -84,7 +84,7 @@ public class Tests {
     }
 
     @Test
-    public void peakLoadTest2() throws InterruptedException {
+    public void peakLoadTest2() throws InterruptedException { //this does not work! send help now im dying
         WikiMediator wiki = new WikiMediator();
         // WikiMediator.requests.clear();
         wiki.simpleSearch("Moana", 45);
@@ -203,7 +203,7 @@ public class Tests {
     }
 
     @Test
-    public void testCacheUpdate1(){
+    public void testCacheUpdate1() {
         Page page1 = new Page("Cranium");
         Page page2 = new Page("Mandible");
         Page page3 = new Page("Clavical");
@@ -352,12 +352,10 @@ public class Tests {
         Assert.assertEquals(expected, wiki.trending(4));
 
     }
-}
 
-    /*
+
     @Test
-    public void testFullCapacity1(){
-        WikiMediator wiki = new WikiMediator();
+    public void testFullCapacity1() {
         Cache<Page> fullCache = new Cache<>(1, 2);
         Page page1 = new Page("Lobster");
         Page page2 = new Page("Shrimp");
@@ -366,16 +364,18 @@ public class Tests {
     }
 
     @Test
-    public void testFullCapacity(){
-        WikiMediator wiki = new WikiMediator();
+    public void testFullCapacity() {
         Cache<Page> fullCache = new Cache<>(256, 432000);
         Integer i = 1;
-        while(fullCache.size() != 256){
+        while (fullCache.size() != 256) {
             Page page = new Page(i.toString());
             fullCache.put(page);
             i++;
         }
         Page page = new Page("Puppy");
         Assert.assertTrue(fullCache.put(page));
+    }
 }
-  */
+
+    //testCases to write:
+    //trending/zeitgeist 0 limit

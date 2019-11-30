@@ -144,6 +144,9 @@ public class Cache<T extends Cacheable> {
         return touch;
     }
 
+    public boolean contains(T t){
+        return this.cache.containsKey(t) && this.cache.containsValue(this.cache.get(t));
+    }
     /**
      * Update an object in the cache.
      * This method updates an object and acts like a "touch" to renew the

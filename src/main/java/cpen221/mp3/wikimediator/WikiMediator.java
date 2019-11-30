@@ -25,9 +25,12 @@ public class WikiMediator {
     final static long ONE_SECOND = 1000;
     public static Wiki wiki;
     public Map<String, List<Long>> requests = new HashMap<>();
-  //  private static List<Calendar> times = new ArrayList<>(); //do we need this?
+    private static List<Long> times = new ArrayList<>();
     private Cache<Cacheable> cache = new Cache<>();
 
+    /**
+     * effects: creates a WikiMediator object of the English language Wikipedia
+     */
     public WikiMediator(){
         wiki = new Wiki("en.wikipedia.org");
     }
@@ -36,10 +39,14 @@ public class WikiMediator {
      *
      * @param query String to search Wikipedia for
      * @param limit maximum number of pages to return
-     * @return up to limit page titles that match the query
+     * @return up to limit page titles that match the query.
+     *         Empty if query is null or an empty String
      */
     public List<String> simpleSearch(String query, int limit) {
         List<Long> dates = new ArrayList();
+        if (query.equals(null) || query.equals("")) {
+            return new ArrayList<>();
+        }
         /**TODO: create helper method for adding to global variables (simpleSearch and getPage)
          */
         Long time = System.currentTimeMillis();
@@ -48,20 +55,23 @@ public class WikiMediator {
         }
         dates.add(time);
         requests.put(query, dates);
-        //times.add(time); //is this needed?
+        times.add(time);
 
         return wiki.search(query, limit);
     }
 
     /**
-     *
-     * @param pageTitle title of page to search for
-     * @return the text associated with the Wikipedia page pageTitle
+     * @param pageTitle title of page being searched for
+     * @return the text associated with the Wikipedia page pageTitle.
+     *         If PageTitle is null or empty, an empty String is returned
      */
     public String getPage(String pageTitle) {
 
-        //add in cache
         Long time = System.currentTimeMillis();
+        times.add(time);
+        if (pageTitle.equals(null) || pageTitle.equals("")) {
+            return "";
+        }
         List<Long> dates = new ArrayList();
         if (requests.containsKey(pageTitle)) {
             dates = requests.get(pageTitle);
@@ -70,24 +80,28 @@ public class WikiMediator {
         requests.put(pageTitle, dates);
         Page page = new Page(pageTitle);
 
-      /*  if (cache.contains(page)) {
+        if (cache.contains(page)) {
             cache.update(page);
             return page.getText();
 
-        }*/
-       // times.add(time);
-        //cache.put(page);
+        }
+        cache.put(page);
         return wiki.getPageText(pageTitle);
     }
 
     /**
-     *
      * @param pageTitle name of the page the search starts from
-     * @param hops maximum number of links allowed to follow
+     * @param hops maximum number of links allowed to follow, must be >= 0
      * @return a list of page titles that can be reached by following up to hops
-     *         links starting with pageTitle
+     *         links starting with pageTitle.
+     *         List includes pageTitle and will return a list containing only
+     *         pageTitle if hops is 0.
+     *
      */
     public List<String> getConnectedPages(String pageTitle, int hops) {
+
+        Long time = System.currentTimeMillis();
+        times.add(time);
         List<String> connectedPages = new ArrayList<>();
         List<String> connected = wiki.getLinksOnPage(pageTitle);
         connectedPages.add(pageTitle);
@@ -122,10 +136,13 @@ public class WikiMediator {
      *
      * @param limit maximum length of List to return
      * @return the most common Strings used in simpleSearch and getPage.
-     *         Items are sorted in non-increasing count order.  Maximum of limit
-     *         items.
+     *         Items are sorted in non-increasing count order.
+     *         List is of maximum length limit.
+     *
      */
     public List<String> zeitgeist(int limit) {
+        Long time = System.currentTimeMillis();
+        times.add(time);
 
         Map<String, Integer> common = new HashMap<>();
         for (String page : requests.keySet()) {
@@ -138,9 +155,14 @@ public class WikiMediator {
     /**
      *
      * @param limit maximum length of List to return
-     * @return most frequent requests in last 30 seconds.  Maximum of limit items
+     * @return most frequent requests searched in getPage and simpleSearch
+     *         in last 30 seconds.
+     *         List is of maximum length limit.
      */
     public List<String> trending(int limit) {
+        Long time = System.currentTimeMillis();
+        times.add(time);
+
         Map<String, Integer> trending = new HashMap<>();
         Long currentTime = System.currentTimeMillis();
 
@@ -160,6 +182,15 @@ public class WikiMediator {
         return mostCommon(limit, trending);
     }
 
+    /**
+     *
+     * @param maxNum maximum length of List to return
+     * @param trendingMap key: String
+     *                    value: number of occurrences of key
+     * @return Sorted list of the most common Strings in the given map in descending count order.
+     *         List is of maximum length maxNum.
+     *
+     */
     public List<String> mostCommon(int maxNum, Map<String, Integer> trendingMap){
         List<String> trendingList = new ArrayList<>();
         Integer max;
@@ -180,9 +211,9 @@ public class WikiMediator {
     }
 
     /**
-     *
+     * requires: nothing
      * @return maximum number of requests seen in any 30 second window.
-     *         Includes all requests made using the public API of WikiMediator
+     *         Includes all requests made using the public API of WikiMediator.
      */
     public int peakLoad30s() {
         //create list of all Calendar in requests
