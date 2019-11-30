@@ -363,6 +363,14 @@ public class Tests {
         Assert.assertTrue(fullCache.put(page2));
     }
 
+    @Test(expected = IllegalArgumentException.class)
+    public void testNull() {
+        Cache<Page> cache = new Cache<>();
+        Page page1 = null;
+        Assert.assertFalse(cache.put(page1));
+        cache.get(null);
+    }
+
     @Test
     public void testFullCapacity() {
         Cache<Page> fullCache = new Cache<>(256, 432000);
