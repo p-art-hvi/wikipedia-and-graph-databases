@@ -9,18 +9,25 @@ import java.util.*;
 
 public class WikiMediator {
 
+     /*
+    Representation Invariant:
+    -- must access an online Wikipedia database
+    -- cache contains no duplicates
+    -- requests must not contain duplicate keys
+    -- all times must be in milliseconds and >= zero
 
-    /* TODO: Implement this datatype
+    Abstraction Function:
+    -- wiki represents the online database in which the methods draw data from
+    -- requests maps all searches to a list of the times they have been searched.
+       each instance of time is represented by a long of the time in milliseconds
+    -- times represents a list of all instances in which any requests to the wiki were made.
+       each instance is represented by a long of the time in milliseconds
+    -- cache represents an abstract object which stores Page objects.
+       Page objects are stored for a specified maximum time.
+       stores up to a specified maximum number of Page objects
+    */
 
-            You must implement the methods with the exact signatures
-            as provided in the statement for this mini-project.
 
-            You must add method signatures even for the methods that you
-            do not plan to implement. You should provide skeleton implementation
-            for those methods, and the skeleton implementation could return
-            values like null.
-
-         */
     final static long THIRTY_SECONDS = 30000;
     final static long ONE_SECOND = 1000;
     public static Wiki wiki;
