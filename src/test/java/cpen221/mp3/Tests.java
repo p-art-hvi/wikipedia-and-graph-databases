@@ -115,7 +115,6 @@ public class Tests {
     }
 
 
-
     @Test
     public void testCachePutAndGet1() {
         WikiMediator wiki = new WikiMediator();
@@ -204,7 +203,7 @@ public class Tests {
     }
 
     @Test
-    public void testCacheUpdate1(){
+    public void testCacheUpdate1() {
         Page page1 = new Page("Cranium");
         Page page2 = new Page("Mandible");
         Page page3 = new Page("Clavical");
@@ -280,6 +279,7 @@ public class Tests {
         WikiMediator wiki = new WikiMediator();
         wiki.getPage("Moana");
     }
+
     @Test
     public void ZeitgeistTest() {
         WikiMediator wiki = new WikiMediator();
@@ -352,12 +352,9 @@ public class Tests {
         Assert.assertEquals(expected, wiki.trending(4));
 
     }
-}
 
-    /*
     @Test
-    public void testFullCapacity1(){
-        WikiMediator wiki = new WikiMediator();
+    public void testFullCapacity1() {
         Cache<Page> fullCache = new Cache<>(1, 2);
         Page page1 = new Page("Lobster");
         Page page2 = new Page("Shrimp");
@@ -365,17 +362,24 @@ public class Tests {
         Assert.assertTrue(fullCache.put(page2));
     }
 
+    @Test(expected = IllegalArgumentException.class)
+    public void testNull() {
+        Cache<Page> cache = new Cache<>();
+        Page page1 = null;
+        Assert.assertFalse(cache.put(page1));
+        cache.get(null);
+    }
+
     @Test
-    public void testFullCapacity(){
-        WikiMediator wiki = new WikiMediator();
+    public void testFullCapacity() {
         Cache<Page> fullCache = new Cache<>(256, 432000);
         Integer i = 1;
-        while(fullCache.size() != 256){
+        while (fullCache.size() != 256) {
             Page page = new Page(i.toString());
             fullCache.put(page);
             i++;
         }
         Page page = new Page("Puppy");
         Assert.assertTrue(fullCache.put(page));
+    }
 }
-  */
