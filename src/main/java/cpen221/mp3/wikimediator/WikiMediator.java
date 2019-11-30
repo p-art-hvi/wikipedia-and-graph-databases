@@ -259,4 +259,25 @@ public class WikiMediator {
 
         return searchNumbers.get(searchNumbers.size() - 1);
     }
+
+    /**
+     * Finds a path from the start of the page to the stop page
+     * by following the links between pages
+     * @param startPage the title of the page where the path needs to start
+     * @param stopPage the title of the page where the path should stop
+     * @return a list of page titles visited in the path
+     */
+    List<String> getPath(String startPage, String stopPage){
+        return null;//change this
+    }
+
+    /**
+     *Handles structured queries which allow clients to request page titles
+     *that correlates with specific client-defined criteria.
+     * @param query is the client request for all pages associated with the specific criteria
+     * @return a list of page titles which matches the query
+     */
+    List<String> executeQuery(String query){
+        return null;//change this
+    }
 }

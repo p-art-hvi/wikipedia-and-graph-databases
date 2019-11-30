@@ -4,6 +4,7 @@ import cpen221.mp3.wikimediator.WikiMediator;
 import fastily.jwiki.core.Wiki;
 
 public class Page implements Cacheable {
+    
     private String title;
     private String text;
 
