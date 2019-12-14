@@ -115,7 +115,7 @@ public class Cache<T extends Cacheable> {
         }
         long twelveHrs = 432000;
         List<Long> timeList = new ArrayList<>();
-        if(this.cache.size() == MAXSIZE){
+       /* if(this.cache.size() == MAXSIZE){
             for(T element: this.cache.keySet()){
                 long time = this.cache.get(element);
                 long timeDifference = System.currentTimeMillis() - time;
@@ -137,7 +137,7 @@ public class Cache<T extends Cacheable> {
                     return this.cache.containsKey(t);
                 }
             }
-        }
+        } */
             this.cache.put(t, System.currentTimeMillis());
             return this.cache.containsKey(t);
     }
