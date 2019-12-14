@@ -21,11 +21,9 @@ import java.util.Map;
 
 public class Tests {
 
-    // WikiMediator wiki = new WikiMediator(); // this creates the wiki for the tests
     @Test
     public void peakLoadTest() throws InterruptedException {
         WikiMediator wiki = new WikiMediator();
-        // wiki.requests.clear(); //BUT should this be needed?
         wiki.simpleSearch("Moana", 45);
         wiki.simpleSearch("Frozen", 38);
         Thread.sleep(20000);
@@ -56,7 +54,6 @@ public class Tests {
     @Test
     public void peakLoadTest1() throws InterruptedException {
         WikiMediator wiki = new WikiMediator();
-        // WikiMediator.requests.clear();
         wiki.simpleSearch("Moana", 45);
         wiki.simpleSearch("Frozen", 38);
         wiki.simpleSearch("Sleeping Beauty", 17); //1
@@ -65,7 +62,6 @@ public class Tests {
         wiki.getPage("Aladdin");
         wiki.getPage("Mulan");
         wiki.getPage("Moana");
-        // Thread.sleep(30);
         wiki.getPage("Frozen 2"); //
         wiki.simpleSearch("Moana", 17); //3
         wiki.simpleSearch("Frozen", 38);
@@ -84,9 +80,8 @@ public class Tests {
     }
 
     @Test
-    public void peakLoadTest2() throws InterruptedException { //this does not work! send help now im dying
+    public void peakLoadTest2() throws InterruptedException {
         WikiMediator wiki = new WikiMediator();
-        // WikiMediator.requests.clear();
         wiki.simpleSearch("Moana", 45);
         wiki.simpleSearch("Frozen", 38);
         wiki.simpleSearch("Sleeping Beauty", 17); //1
@@ -96,7 +91,6 @@ public class Tests {
         wiki.simpleSearch("Frozen", 3);
         wiki.getPage("Mulan");
         wiki.getPage("Moana");
-        //Thread.sleep(30090);
         wiki.getPage("Frozen 2"); //
         wiki.simpleSearch("Moana", 17); //3
         wiki.simpleSearch("Frozen", 38);
@@ -270,7 +264,7 @@ public class Tests {
         Assert.assertEquals(expected0, wiki.getConnectedPages(pageTitle, 0).size());
         int expected1 = 21;
         Assert.assertEquals(expected1, wiki.getConnectedPages(pageTitle, 1).size());
-        int expected2 = 4288;
+        int expected2 = 4295;
         Assert.assertEquals(expected2, wiki.getConnectedPages(pageTitle, 2).size());
     }
 
@@ -283,7 +277,6 @@ public class Tests {
     @Test
     public void ZeitgeistTest() {
         WikiMediator wiki = new WikiMediator();
-        //wiki.requests.clear(); //BUT should this be needed?
         wiki.simpleSearch("Moana", 4);
         wiki.simpleSearch("Frozen", 38);
         wiki.simpleSearch("Sleeping Beauty", 17); //1
@@ -314,10 +307,39 @@ public class Tests {
 
     }
 
+
+    @Test
+    public void ZeitgeistTestLimit0() {
+        WikiMediator wiki = new WikiMediator();
+        wiki.simpleSearch("Moana", 4);
+        wiki.simpleSearch("Frozen", 38);
+        wiki.simpleSearch("Sleeping Beauty", 17); //1
+        wiki.simpleSearch("Tangled", 100); //1
+        wiki.simpleSearch("The Little Mermaid", 67); //1
+        wiki.getPage("Aladdin");
+        wiki.getPage("Mulan");
+        wiki.getPage("Moana");
+        wiki.getPage("Frozen 2"); //
+        wiki.simpleSearch("Moana", 17); //3
+        wiki.simpleSearch("Frozen", 38);
+        wiki.simpleSearch("Frozen", 38);
+        wiki.simpleSearch("Frozen", 38);
+        wiki.simpleSearch("Frozen", 38);//5
+        wiki.getPage("Mulan");
+        wiki.getPage("Mulan");
+        wiki.getPage("Mulan"); //4
+        wiki.getPage("Aladdin"); //2
+
+
+        List<String> expected = new ArrayList<>();
+
+        Assert.assertEquals(expected, wiki.zeitgeist(0));
+
+    }
+
     @Test
     public void TrendingTest() throws InterruptedException {
         WikiMediator wiki = new WikiMediator();
-        wiki.requests.clear(); //BUT should this be needed?
         wiki.simpleSearch("Moana", 45);
         wiki.simpleSearch("Frozen", 38);
         wiki.simpleSearch("Sleeping Beauty", 17); //1
@@ -353,6 +375,40 @@ public class Tests {
 
     }
 
+    @Test
+    public void TrendingTestLimit0() throws InterruptedException {
+        WikiMediator wiki = new WikiMediator();
+        wiki.simpleSearch("Moana", 45);
+        wiki.simpleSearch("Frozen", 38);
+        wiki.simpleSearch("Sleeping Beauty", 17); //1
+        wiki.simpleSearch("Tangled", 100); //1
+        wiki.simpleSearch("The Little Mermaid", 67); //1
+        wiki.getPage("Aladdin");
+        wiki.getPage("Mulan");
+        wiki.getPage("Moana");
+        wiki.getPage("Frozen 2"); //
+        wiki.getPage("Moana");
+        wiki.getPage("Moana");
+        wiki.getPage("Moana");
+        Thread.sleep(31000);
+        wiki.simpleSearch("Moana", 17); //3
+        wiki.simpleSearch("Frozen", 38);
+        wiki.simpleSearch("Frozen", 38);
+        wiki.simpleSearch("Frozen", 38);
+        wiki.simpleSearch("Frozen", 38);//5
+        wiki.getPage("Mulan");
+        wiki.getPage("Mulan");
+        wiki.getPage("Aladdin"); //4
+        wiki.getPage("Aladdin"); //2
+        wiki.getPage("Mulan");
+
+
+        List<String> expected = new ArrayList<>();
+
+        Assert.assertEquals(expected, wiki.trending(0));
+
+    }
+
 
     @Test
     public void testFullCapacity1() {
@@ -371,6 +427,25 @@ public class Tests {
         cache.get(null);
     }
 
+    @Test
+    public void testPageOverrides() {
+        Page page1 = new Page("Hola");
+        Page page2 = new Page("Hola");
+        Page page3 = new Page("Shalom");
+
+        Assert.assertTrue(page1.equals(page2));
+        Assert.assertEquals(page1.hashCode(), page2.hashCode());
+        Assert.assertFalse(page2.equals(page3));
+        Assert.assertNotEquals(page2.hashCode(), page3.hashCode());
+    }
+
+    @Test
+    public void testingNullSearches() {
+        WikiMediator wiki = new WikiMediator();
+        Assert.assertEquals("", wiki.getPage(""));
+        Assert.assertEquals(new ArrayList<>(), wiki.simpleSearch("", 2));
+    }
+
    /* @Test
     public void testFullCapacity() {
         Cache<Page> fullCache = new Cache<>(256, 432000);
@@ -384,6 +459,3 @@ public class Tests {
         Assert.assertTrue(fullCache.put(page));
     }*/
 }
-
-    //testCases to write:
-    //trending/zeitgeist 0 limit
