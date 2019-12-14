@@ -62,10 +62,10 @@ public class WikiMediatorServer {
     }
 
     private void handleClients(BufferedReader inStream, PrintWriter outStream) throws IOException {
-        Thread thread = new Thread(new Runnable(){
+     //   Thread thread = new Thread(new Runnable(){
 
-            @Override
-            public void run() {
+      //      @Override
+          /*  public void run() {
                 try{
                     JsonParser jsonParser = new JsonParser();
                   //  Gson gson = new Gson();
@@ -84,7 +84,7 @@ public class WikiMediatorServer {
 
             }
 
-            /*
+
                 String line;
                 while(true){
                     try {
@@ -93,7 +93,7 @@ public class WikiMediatorServer {
                         e.printStackTrace();
                     }
                 }*/
-        });
+        //});
     }
 
 

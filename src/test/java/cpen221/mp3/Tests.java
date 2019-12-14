@@ -264,7 +264,7 @@ public class Tests {
         Assert.assertEquals(expected0, wiki.getConnectedPages(pageTitle, 0).size());
         int expected1 = 21;
         Assert.assertEquals(expected1, wiki.getConnectedPages(pageTitle, 1).size());
-        int expected2 = 4295;
+        int expected2 = 4297;
         Assert.assertEquals(expected2, wiki.getConnectedPages(pageTitle, 2).size());
     }
 
