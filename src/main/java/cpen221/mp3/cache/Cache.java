@@ -35,7 +35,7 @@ public class Cache<T extends Cacheable> {
      *          Objects in the cache that have not been refreshed or renewed
      *          within the timeout period, are removed from the cache.
      */
-    public Cache(int cap, int tOut) {
+    public Cache(int cap, int tOut){
         capacity = cap;
         timeout = tOut;
         this.cache = new ConcurrentHashMap<>();
@@ -47,7 +47,7 @@ public class Cache<T extends Cacheable> {
      * effects: a cache is created with default capacity and timeout values.
      *          Objects which have not been refreshed or renewed are removed from the cache.
      */
-    public Cache() {
+    public Cache(){
         timeout = DTIMEOUT;
         capacity = DSIZE;
         this.cache = new ConcurrentHashMap<>();
@@ -59,8 +59,27 @@ public class Cache<T extends Cacheable> {
      * effects: Removes objects which have not been refreshed or renewed
      *          within the timeout period from the cache.
      */
-    private void removeOldElements() {
-        Thread thread = new Thread(new Runnable() {
+    private void removeOldElements(){
+       /* Thread thread2 = new Thread(new Runnable(){
+
+            @Override
+            public void run() {
+                long previous = -1;
+                while(true){
+                    long recent = System.currentTimeMillis();
+                    while(recent - previous >= 10){
+                        previous = recent;
+                        for(T element: cache.keySet()){
+                            if(recent - cache.get(element) >= timeout * 10){
+                                cache.remove(element, cache.get(element));
+                            }
+                        }
+                    }
+                }
+            }
+        });
+        */
+        Thread thread1 = new Thread(new Runnable() {
             @Override
             public void run(){
                 long previous = -1;
@@ -77,7 +96,10 @@ public class Cache<T extends Cacheable> {
                 }
             }
         });
-        thread.start();
+        thread1.start();
+       // thread2.start();
+        //thread1.join();
+        //thread2.join();
     }
 
     /**
@@ -98,27 +120,26 @@ public class Cache<T extends Cacheable> {
                 long time = this.cache.get(element);
                 long timeDifference = System.currentTimeMillis() - time;
                 if(timeDifference >= twelveHrs) {
-                    this.cache.remove(element, this.cache.get(element));
+                    this.cache.remove(element);
                     this.cache.put(t, System.currentTimeMillis());
-                    return this.cache.containsKey(t) && this.cache.containsValue(this.cache.get(t));
+                    return this.cache.containsKey(t);
                 }else{
                     timeList.add(timeDifference);
                 }
             }
-
             Collections.sort(timeList);
 
             long longest = timeList.get(timeList.size() - 1);
             for(T element: this.cache.keySet()){
                 if(this.cache.get(element) == longest){
-                    this.cache.remove(element, this.cache.get(element));
+                    this.cache.remove(element);
                     this.cache.put(t, System.currentTimeMillis());
-                    return this.cache.containsKey(t) && this.cache.containsValue(this.cache.get(t));
+                    return this.cache.containsKey(t);
                 }
             }
         }
             this.cache.put(t, System.currentTimeMillis());
-            return this.cache.containsKey(t) && this.cache.containsValue(this.cache.get(t));
+            return this.cache.containsKey(t);
     }
 
     /**
@@ -171,7 +192,7 @@ public class Cache<T extends Cacheable> {
      * @return true if the object is contained in the cache. Otherwise return false.
      */
     public boolean contains(T t){
-        return this.cache.containsKey(t) && this.cache.containsValue(this.cache.get(t));
+        return this.cache.containsKey(t);
     }
 
 
