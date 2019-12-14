@@ -447,17 +447,4 @@ public class Tests {
         Assert.assertEquals(new ArrayList<>(), wiki.simpleSearch("", 2));
     }
 
- 
-@Test
- public void testFullCapacity() throws InterruptedException {
-        Cache<Page> fullCache = new Cache<>(256, 432000);
-        Integer i = 1;
-        while (fullCache.size() != 256) {
-            Page page = new Page(i.toString());
-            fullCache.put(page);
-            i++;
-        }
-        Page page = new Page("Puppy");
-        Assert.assertTrue(fullCache.put(page));
-    }
 }
