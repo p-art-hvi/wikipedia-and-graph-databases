@@ -110,7 +110,7 @@ public class Tests {
 
 
     @Test
-    public void testCachePutAndGet1() {
+    public void testCachePutAndGet1() throws InterruptedException {
         WikiMediator wiki = new WikiMediator();
         Page page = new Page("The Time Traveler's Wife");
         Cache<Page> cache = new Cache<>();
@@ -119,7 +119,7 @@ public class Tests {
     }
 
     @Test
-    public void testCachePutAndGet2() {
+    public void testCachePutAndGet2() throws InterruptedException {
         Page page1 = new Page("Jellyfish");
         Page page2 = new Page("Giant Squid");
         Page page3 = new Page("Octopus");
@@ -148,7 +148,7 @@ public class Tests {
     }
 
     @Test
-    public void testCacheTouch1() {
+    public void testCacheTouch1() throws InterruptedException {
         Page page1 = new Page("Australian Shepherd");
         Page page2 = new Page("Bernese Mountain Dog");
         Page page3 = new Page("Newfoundland Dog");
@@ -197,7 +197,7 @@ public class Tests {
     }
 
     @Test
-    public void testCacheUpdate1() {
+    public void testCacheUpdate1() throws InterruptedException {
         Page page1 = new Page("Cranium");
         Page page2 = new Page("Mandible");
         Page page3 = new Page("Clavical");
@@ -411,7 +411,7 @@ public class Tests {
 
 
     @Test
-    public void testFullCapacity1() {
+    public void testFullCapacity1() throws InterruptedException {
         Cache<Page> fullCache = new Cache<>(1, 2);
         Page page1 = new Page("Lobster");
         Page page2 = new Page("Shrimp");
@@ -420,12 +420,13 @@ public class Tests {
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void testNull() {
+    public void testNull() throws InterruptedException {
         Cache<Page> cache = new Cache<>();
         Page page1 = null;
         Assert.assertFalse(cache.put(page1));
         cache.get(null);
     }
+
 
     @Test
     public void testPageOverrides() {
@@ -446,8 +447,9 @@ public class Tests {
         Assert.assertEquals(new ArrayList<>(), wiki.simpleSearch("", 2));
     }
 
-   /* @Test
-    public void testFullCapacity() {
+ 
+@Test
+ public void testFullCapacity() throws InterruptedException {
         Cache<Page> fullCache = new Cache<>(256, 432000);
         Integer i = 1;
         while (fullCache.size() != 256) {
@@ -457,5 +459,5 @@ public class Tests {
         }
         Page page = new Page("Puppy");
         Assert.assertTrue(fullCache.put(page));
-    }*/
+    }
 }
