@@ -68,4 +68,9 @@ public class Page implements Cacheable {
         }
         return false;
     }
+
+    @Override
+    public int hashCode() {
+        return (title.length() + text.length()) / 1000;
+    }
 }
