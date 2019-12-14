@@ -51,7 +51,7 @@ public class WikiMediator {
      */
     public List<String> simpleSearch(String query, int limit) {
         List<Long> dates = new ArrayList();
-        if (query.equals(null) || query.equals("")) {
+        if (query.equals("")) {
             return new ArrayList<>();
         }
         /**TODO: create helper method for adding to global variables (simpleSearch and getPage)
@@ -76,7 +76,7 @@ public class WikiMediator {
 
         Long time = System.currentTimeMillis();
         times.add(time);
-        if (pageTitle.equals(null) || pageTitle.equals("")) {
+        if ( pageTitle.equals("")) {
             return "";
         }
         List<Long> dates = new ArrayList();
@@ -233,23 +233,17 @@ public class WikiMediator {
         }
         //check for Calendar firstSearch
         Collections.sort(allSearches);
-        long firstSearch = allSearches.get(0);
-        //check every 30 second interval current - firstSearch
-        long currentTime = System.currentTimeMillis();
-        long intervalMin = allSearches.get(allSearches.size()-1) - THIRTY_SECONDS;
-        long intervalMax = allSearches.get(allSearches.size()-1);
-        if (intervalMin < firstSearch) {
-            return allSearches.size();
-        }
-        while(intervalMin >= firstSearch) {
+
+
+        for(int i = 1; i <= allSearches.size(); i++) {
+            long intervalMin = allSearches.get(allSearches.size()-i) - THIRTY_SECONDS;
+            long intervalMax = allSearches.get(allSearches.size()-i);
             int count = 0;
             for (Long time: allSearches) {
                 if (time >= intervalMin && time <= intervalMax) {
                     count++;
                 }
             }
-            intervalMin = intervalMin - ONE_SECOND;
-            intervalMax = intervalMax - ONE_SECOND;
             searchNumbers.add(count);
         }
 
