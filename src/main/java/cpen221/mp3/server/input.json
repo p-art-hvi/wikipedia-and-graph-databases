@@ -1,0 +1,6 @@
+[{
+  "id": "1",
+  "type": "simpleSearch",
+  "query": "Barack Obama",
+  "limit": "12"
+}]

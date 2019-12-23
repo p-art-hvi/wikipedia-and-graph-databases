@@ -1,10 +1,13 @@
 package cpen221.mp3;
 
+import com.google.gson.JsonParser;
+import cpen221.mp3.server.WikiMediatorServer;
 import cpen221.mp3.wikimediator.WikiMediator;
 import fastily.jwiki.core.Wiki;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.io.*;
 import java.nio.file.StandardWatchEventKinds;
 import java.util.ArrayList;
 import java.util.List;
@@ -108,6 +111,14 @@ public class Tests {
 
     }
 
+    @Test
+    public void testHandleClients() throws IOException {
+        JsonParser jsonParser = new JsonParser();
+        FileReader reader = new FileReader("input.json");
+        BufferedReader inputStream = new BufferedReader(reader);
+        PrintWriter outStream = new PrintWriter(new FileWriter("output.json"));
+        WikiMediatorServer.handleClients(inputStream, outStream);
+    }
 
     @Test
     public void testCachePutAndGet1() throws InterruptedException {

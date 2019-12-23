@@ -31,7 +31,7 @@ public class WikiMediator {
     final static long THIRTY_SECONDS = 30000;
     final static long ONE_SECOND = 1000;
     public static Wiki wiki;
-    public Map<String, List<Long>> requests = new HashMap<>();
+    private static Map<String, List<Long>> requests = new HashMap<>();
     private static List<Long> times = new ArrayList<>();
     private Cache<Cacheable> cache = new Cache<>();
 
@@ -49,7 +49,7 @@ public class WikiMediator {
      * @return up to limit page titles that match the query.
      *         Empty if query is null or an empty String
      */
-    public List<String> simpleSearch(String query, int limit) {
+    public static List<String> simpleSearch(String query, int limit) {
         List<Long> dates = new ArrayList();
         if (query.equals("")) {
             return new ArrayList<>();

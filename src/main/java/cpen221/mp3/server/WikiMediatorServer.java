@@ -4,13 +4,13 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import cpen221.mp3.wikimediator.WikiMediator;
 
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.text.ParseException;
-
-//import org.json.simple.parser.JSONParser;
+import java.util.List;
 
 public class WikiMediatorServer {
 
@@ -61,41 +61,66 @@ public class WikiMediatorServer {
 
     }
 
-    private void handleClients(BufferedReader inStream, PrintWriter outStream) throws IOException {
-     //   Thread thread = new Thread(new Runnable(){
+    //make this private and non-static
+    public static void handleClients(BufferedReader inStream, PrintWriter outStream) throws IOException {
+     Thread thread = new Thread(new Runnable(){
 
-      //      @Override
-          /*  public void run() {
-                try{
+          @Override
+           public void run() {
+              Gson gson = new Gson();
+
+              try(BufferedReader reader = inStream){
                     JsonParser jsonParser = new JsonParser();
-                  //  Gson gson = new Gson();
-                  //  DataInput gsonObject = gson.fromJson(inStream, DataInput.class);
-                    //String json = gson.toJson(inStream);
+                    Object object = jsonParser.parse(inStream);
+                    JsonObject jsonObject = (JsonObject) object;
+                    String type = jsonObject.get("type").getAsString();
+                    String id = jsonObject.get("id").getAsString();
+                    switch(type){
+                        case "simpleSearch":
+                            String query = jsonObject.get("query").getAsString();
+                            Integer limit = jsonObject.get("limit").getAsInt();
+                            List<String> response = WikiMediator.simpleSearch(query, limit);
+                            String status = "success";
+                            JsonObject output = new JsonObject();
+                            output.addProperty("id", id);
+                            output.addProperty("status", status);
+                            output.addProperty("response", response.toString());
+                            String out = output.getAsString();
+                            outStream.write(out);
+                            break;
+                        case "getPage":
 
-                    JsonArray requestArray = (JsonArray) jsonParser.parse(inStream);
-                    for(Object o: requestArray){
-                        JsonObject request = (JsonObject) o;
-                        String id = (String) request.get("id");
+                            break;
+                        case "getConnectedPages":
+
+                            break;
+                        case "zeitgeist":
+
+                            break;
+                        case "trending":
+
+                            break;
+                        case "mostCommon":
+
+                            break;
+                        case "peakLoad30s":
+
+                            break;
+                        default:
+                            break;
                     }
-                } catch (IOException | ParseException e){
-                    e.printStackTrace();
-                }
-
-
-            }
-
-
-                String line;
-                while(true){
-                    try {
-                        if ((line = inStream.readLine()) == null) break;
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }*/
-        //});
+              }catch (IOException e){
+                  e.printStackTrace();
+              }
+              String line;
+              while(true){
+                  try {
+                      if ((line = inStream.readLine()) == null) break;
+                  } catch (IOException e) {
+                      e.printStackTrace();
+                  }
+              }
+          }
+    });
     }
-
-
-
 }
