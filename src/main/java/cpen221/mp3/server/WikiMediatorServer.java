@@ -88,7 +88,7 @@ public class WikiMediatorServer {
                                 output1.addProperty("status", status1);
                                 output1.addProperty("response", response1.toString());
                                 String out1 = output1.toString();
-                                outStream.write(out1);
+                                outStream.println(out1);
                                 break;
                             case "getPage":
                                 String pageTitle = jsonObject.get("pageTitle").getAsString();

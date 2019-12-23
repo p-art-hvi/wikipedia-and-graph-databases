@@ -120,6 +120,7 @@ public class Tests {
         BufferedReader inputStream = new BufferedReader(reader);
         PrintWriter outStream = new PrintWriter(new FileWriter("output.json"));
         WikiMediatorServer.handleClients(inputStream, outStream);
+        outStream.close();
     }
 
     @Test
