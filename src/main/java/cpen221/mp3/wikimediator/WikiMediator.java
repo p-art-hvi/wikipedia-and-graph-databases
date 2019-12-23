@@ -30,10 +30,10 @@ public class WikiMediator {
 
     final static long THIRTY_SECONDS = 30000;
     final static long ONE_SECOND = 1000;
-    public static Wiki wiki;
+    public static Wiki wiki = new Wiki("en.wikipedia.org");
     private static Map<String, List<Long>> requests = new HashMap<>();
     private static List<Long> times = new ArrayList<>();
-    private Cache<Cacheable> cache = new Cache<>();
+    private static Cache<Cacheable> cache = new Cache<>();
 
     /**
      * effects: creates a WikiMediator object of the English language Wikipedia
@@ -72,7 +72,7 @@ public class WikiMediator {
      * @return the text associated with the Wikipedia page pageTitle.
      *         If PageTitle is null or empty, an empty String is returned
      */
-    public String getPage(String pageTitle) {
+    public static String getPage(String pageTitle) {
 
         Long time = System.currentTimeMillis();
         times.add(time);
@@ -105,7 +105,7 @@ public class WikiMediator {
      *         pageTitle if hops is 0.
      *
      */
-    public List<String> getConnectedPages(String pageTitle, int hops) {
+    public static List<String> getConnectedPages(String pageTitle, int hops) {
 
         Long time = System.currentTimeMillis();
         times.add(time);
@@ -147,7 +147,7 @@ public class WikiMediator {
      *         List is of maximum length limit.
      *
      */
-    public List<String> zeitgeist(int limit) {
+    public static List<String> zeitgeist(int limit) {
         Long time = System.currentTimeMillis();
         times.add(time);
 
@@ -166,7 +166,7 @@ public class WikiMediator {
      *         in last 30 seconds.
      *         List is of maximum length limit.
      */
-    public List<String> trending(int limit) {
+    public static List<String> trending(int limit) {
         Long time = System.currentTimeMillis();
         times.add(time);
 
@@ -198,7 +198,7 @@ public class WikiMediator {
      *         List is of maximum length maxNum.
      *
      */
-    public List<String> mostCommon(int maxNum, Map<String, Integer> trendingMap){
+    private static List<String> mostCommon(int maxNum, Map<String, Integer> trendingMap){
         List<String> trendingList = new ArrayList<>();
         Integer max;
         String mostCommon = null;
@@ -222,7 +222,7 @@ public class WikiMediator {
      * @return maximum number of requests seen in any 30 second window.
      *         Includes all requests made using the public API of WikiMediator.
      */
-    public int peakLoad30s() {
+    public static int peakLoad30s() {
         //create list of all Calendar in requests
         List<Long> allSearches = new ArrayList<>();
         List<Integer> searchNumbers = new ArrayList<>();

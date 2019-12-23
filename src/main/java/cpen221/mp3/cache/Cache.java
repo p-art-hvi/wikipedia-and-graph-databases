@@ -60,25 +60,6 @@ public class Cache<T extends Cacheable> {
      *          within the timeout period from the cache.
      */
     private void removeOldElements(){
-       /* Thread thread2 = new Thread(new Runnable(){
-
-            @Override
-            public void run() {
-                long previous = -1;
-                while(true){
-                    long recent = System.currentTimeMillis();
-                    while(recent - previous >= 10){
-                        previous = recent;
-                        for(T element: cache.keySet()){
-                            if(recent - cache.get(element) >= timeout * 10){
-                                cache.remove(element, cache.get(element));
-                            }
-                        }
-                    }
-                }
-            }
-        });
-        */
         Thread thread1 = new Thread(new Runnable() {
             @Override
             public void run(){
@@ -97,9 +78,6 @@ public class Cache<T extends Cacheable> {
             }
         });
         thread1.start();
-       // thread2.start();
-        //thread1.join();
-        //thread2.join();
     }
 
     /**

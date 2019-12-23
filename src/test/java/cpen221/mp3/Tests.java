@@ -114,7 +114,9 @@ public class Tests {
     @Test
     public void testHandleClients() throws IOException {
         JsonParser jsonParser = new JsonParser();
-        FileReader reader = new FileReader("input.json");
+        File file = new File("C:\\jsonFiles\\input.json");
+        FileReader reader = new FileReader(file);
+        //FileReader reader = new FileReader("input.json");
         BufferedReader inputStream = new BufferedReader(reader);
         PrintWriter outStream = new PrintWriter(new FileWriter("output.json"));
         WikiMediatorServer.handleClients(inputStream, outStream);

@@ -63,56 +63,96 @@ public class WikiMediatorServer {
 
     //make this private and non-static
     public static void handleClients(BufferedReader inStream, PrintWriter outStream) throws IOException {
-     Thread thread = new Thread(new Runnable(){
+     //Thread thread = new Thread(new Runnable(){
 
-          @Override
-           public void run() {
+          //@Override
+           //public void run() {
               Gson gson = new Gson();
 
               try(BufferedReader reader = inStream){
                     JsonParser jsonParser = new JsonParser();
-                    Object object = jsonParser.parse(inStream);
-                    JsonObject jsonObject = (JsonObject) object;
-                    String type = jsonObject.get("type").getAsString();
-                    String id = jsonObject.get("id").getAsString();
-                    switch(type){
-                        case "simpleSearch":
-                            String query = jsonObject.get("query").getAsString();
-                            Integer limit = jsonObject.get("limit").getAsInt();
-                            List<String> response = WikiMediator.simpleSearch(query, limit);
-                            String status = "success";
-                            JsonObject output = new JsonObject();
-                            output.addProperty("id", id);
-                            output.addProperty("status", status);
-                            output.addProperty("response", response.toString());
-                            String out = output.getAsString();
-                            outStream.write(out);
-                            break;
-                        case "getPage":
-
-                            break;
-                        case "getConnectedPages":
-
-                            break;
-                        case "zeitgeist":
-
-                            break;
-                        case "trending":
-
-                            break;
-                        case "mostCommon":
-
-                            break;
-                        case "peakLoad30s":
-
-                            break;
-                        default:
-                            break;
+                    System.out.println("here 1");
+                    JsonArray jsonArray = (JsonArray) jsonParser.parse(inStream);
+                    for(Object o: jsonArray){
+                        JsonObject jsonObject = (JsonObject) o;
+                        String type = jsonObject.get("type").getAsString();
+                        String id = jsonObject.get("id").getAsString();
+                        switch(type){
+                            case "simpleSearch":
+                                String query = jsonObject.get("query").getAsString();
+                                Integer limit = jsonObject.get("limit").getAsInt();
+                                List<String> response1 = WikiMediator.simpleSearch(query, limit);
+                                String status1 = "success";
+                                JsonObject output1 = new JsonObject();
+                                output1.addProperty("id", id);
+                                output1.addProperty("status", status1);
+                                output1.addProperty("response", response1.toString());
+                                String out1 = output1.toString();
+                                outStream.write(out1);
+                                break;
+                            case "getPage":
+                                String pageTitle = jsonObject.get("pageTitle").getAsString();
+                                String response2 = WikiMediator.getPage(pageTitle);
+                                String status2 = "success";
+                                JsonObject output2 = new JsonObject();
+                                output2.addProperty("id", id);
+                                output2.addProperty("status", status2);
+                                output2.addProperty("response", response2.toString());
+                                String out2 = output2.getAsString();
+                                outStream.write(out2);
+                                break;
+                            case "getConnectedPages":
+                                String pageTitle2 = jsonObject.get("pageTitle").getAsString();
+                                Integer hops = jsonObject.get("hops").getAsInt();
+                                List<String> response3 = WikiMediator.getConnectedPages(pageTitle2, hops);
+                                String status3 = "success";
+                                JsonObject output3 = new JsonObject();
+                                output3.addProperty("id", id);
+                                output3.addProperty("status", status3);
+                                output3.addProperty("response", response3.toString());
+                                String out3 = output3.getAsString();
+                                outStream.write(out3);
+                                break;
+                            case "zeitgeist":
+                                Integer limit2 = jsonObject.get("limit").getAsInt();
+                                List<String> response4 = WikiMediator.zeitgeist(limit2);
+                                String status4 = "success";
+                                JsonObject output4 = new JsonObject();
+                                output4.addProperty("id", id);
+                                output4.addProperty("status", status4);
+                                output4.addProperty("response", response4.toString());
+                                String out4 = output4.getAsString();
+                                outStream.write(out4);
+                                break;
+                            case "trending":
+                                Integer limit3 = jsonObject.get("limit").getAsInt();
+                                List<String> response5 = WikiMediator.trending(limit3);
+                                String status5 = "success";
+                                JsonObject output5 = new JsonObject();
+                                output5.addProperty("id", id);
+                                output5.addProperty("status", status5);
+                                output5.addProperty("response", response5.toString());
+                                String out5 = output5.getAsString();
+                                outStream.write(out5);
+                                break;
+                            case "peakLoad30s":
+                                Integer response6 = WikiMediator.peakLoad30s();
+                                String status6 = "success";
+                                JsonObject output6 = new JsonObject();
+                                output6.addProperty("id", id);
+                                output6.addProperty("status", status6);
+                                output6.addProperty("response", response6.toString());
+                                String out6 = output6.getAsString();
+                                outStream.write(out6);
+                                break;
+                            default:
+                                break;
+                        }
                     }
               }catch (IOException e){
                   e.printStackTrace();
               }
-              String line;
+              /*String line;
               while(true){
                   try {
                       if ((line = inStream.readLine()) == null) break;
@@ -120,7 +160,8 @@ public class WikiMediatorServer {
                       e.printStackTrace();
                   }
               }
+               */
           }
-    });
+    //});
+    // thread.start();
     }
-}
