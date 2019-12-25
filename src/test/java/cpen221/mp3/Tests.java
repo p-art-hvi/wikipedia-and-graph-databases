@@ -111,6 +111,7 @@ public class Tests {
 
     }
 
+    /*
     @Test
     public void testHandleClients() throws IOException {
         JsonParser jsonParser = new JsonParser();
@@ -122,6 +123,7 @@ public class Tests {
         WikiMediatorServer.handleClients(inputStream, outStream);
         outStream.close();
     }
+     */
 
     @Test
     public void testCachePutAndGet1() throws InterruptedException {

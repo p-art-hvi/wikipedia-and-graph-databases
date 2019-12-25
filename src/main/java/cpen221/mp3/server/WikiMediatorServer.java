@@ -36,17 +36,19 @@ public class WikiMediatorServer {
      *          up to n requests concurrently.
      */
     public WikiMediatorServer(int port, int n) throws IOException {
-        int concurrentRequests = 0;
+        //int concurrentRequests = 0;
         PrintWriter outStream = null;
         BufferedReader inStream = null;
 
-        while (concurrentRequests < n) {
+        while (true) {
             try {
                 ServerSocket serverSocket = new ServerSocket(port);
                 Socket clientSocket = serverSocket.accept();
                 outStream = new PrintWriter(new FileWriter("output.json"));
                 inStream = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-                handleClients(inStream, outStream);
+                Thread thread = new HandleClients(inStream, outStream);
+                //concurrentRequests = handleClients(inStream, outStream);
+                thread.start();
             }
             finally{
                 if(inStream!= null){
@@ -56,19 +58,15 @@ public class WikiMediatorServer {
                     outStream.close();
                 }
             }
-            concurrentRequests++;
+            //concurrentRequests++;
         }
 
     }
 
-    //make this private and non-static
+    /*
     public static void handleClients(BufferedReader inStream, PrintWriter outStream) throws IOException {
-     //Thread thread = new Thread(new Runnable(){
-
-          //@Override
-           //public void run() {
               Gson gson = new Gson();
-
+              //int concurrentRequests = 0;
               try(BufferedReader reader = inStream){
                     JsonParser jsonParser = new JsonParser();
                     System.out.println("here 1");
@@ -80,7 +78,7 @@ public class WikiMediatorServer {
                         switch(type){
                             case "simpleSearch":
                                 String query = jsonObject.get("query").getAsString();
-                                Integer limit = jsonObject.get("limit").getAsInt();
+                                int limit = jsonObject.get("limit").getAsInt();
                                 List<String> response1 = WikiMediator.simpleSearch(query, limit);
                                 String status1 = "success";
                                 JsonObject output1 = new JsonObject();
@@ -89,6 +87,7 @@ public class WikiMediatorServer {
                                 output1.addProperty("response", response1.toString());
                                 String out1 = output1.toString();
                                 outStream.println(out1);
+                                //concurrentRequests++;
                                 break;
                             case "getPage":
                                 String pageTitle = jsonObject.get("pageTitle").getAsString();
@@ -100,10 +99,11 @@ public class WikiMediatorServer {
                                 output2.addProperty("response", response2.toString());
                                 String out2 = output2.getAsString();
                                 outStream.write(out2);
+                                //concurrentRequests++;
                                 break;
                             case "getConnectedPages":
                                 String pageTitle2 = jsonObject.get("pageTitle").getAsString();
-                                Integer hops = jsonObject.get("hops").getAsInt();
+                                int hops = jsonObject.get("hops").getAsInt();
                                 List<String> response3 = WikiMediator.getConnectedPages(pageTitle2, hops);
                                 String status3 = "success";
                                 JsonObject output3 = new JsonObject();
@@ -112,9 +112,10 @@ public class WikiMediatorServer {
                                 output3.addProperty("response", response3.toString());
                                 String out3 = output3.getAsString();
                                 outStream.write(out3);
+                                //concurrentRequests++;
                                 break;
                             case "zeitgeist":
-                                Integer limit2 = jsonObject.get("limit").getAsInt();
+                                int limit2 = jsonObject.get("limit").getAsInt();
                                 List<String> response4 = WikiMediator.zeitgeist(limit2);
                                 String status4 = "success";
                                 JsonObject output4 = new JsonObject();
@@ -123,9 +124,10 @@ public class WikiMediatorServer {
                                 output4.addProperty("response", response4.toString());
                                 String out4 = output4.getAsString();
                                 outStream.write(out4);
+                                //concurrentRequests++;
                                 break;
                             case "trending":
-                                Integer limit3 = jsonObject.get("limit").getAsInt();
+                                int limit3 = jsonObject.get("limit").getAsInt();
                                 List<String> response5 = WikiMediator.trending(limit3);
                                 String status5 = "success";
                                 JsonObject output5 = new JsonObject();
@@ -134,34 +136,28 @@ public class WikiMediatorServer {
                                 output5.addProperty("response", response5.toString());
                                 String out5 = output5.getAsString();
                                 outStream.write(out5);
+                                //concurrentRequests++;
                                 break;
                             case "peakLoad30s":
-                                Integer response6 = WikiMediator.peakLoad30s();
+                                int response6 = WikiMediator.peakLoad30s();
                                 String status6 = "success";
                                 JsonObject output6 = new JsonObject();
                                 output6.addProperty("id", id);
                                 output6.addProperty("status", status6);
-                                output6.addProperty("response", response6.toString());
+                                output6.addProperty("response", Integer.toString(response6));
                                 String out6 = output6.getAsString();
                                 outStream.write(out6);
+                                //concurrentRequests++;
                                 break;
                             default:
+                                //need to write default
                                 break;
                         }
                     }
               }catch (IOException e){
                   e.printStackTrace();
               }
-              /*String line;
-              while(true){
-                  try {
-                      if ((line = inStream.readLine()) == null) break;
-                  } catch (IOException e) {
-                      e.printStackTrace();
-                  }
-              }
-               */
+              //return concurrentRequests;
           }
-    //});
-    // thread.start();
+          */
     }
