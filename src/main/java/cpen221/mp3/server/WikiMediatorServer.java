@@ -44,25 +44,30 @@ public class WikiMediatorServer {
             try {
                 ServerSocket serverSocket = new ServerSocket(port);
                 Socket clientSocket = serverSocket.accept();
-                outStream = new PrintWriter(new FileWriter("output.json"));
+                System.out.println("A new client is connected : " + clientSocket);
+                //outStream = new PrintWriter(new FileWriter("output.json"));
                 inStream = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-                Thread thread = new HandleClients(inStream, outStream);
-                //concurrentRequests = handleClients(inStream, outStream);
+                DataOutputStream outStream1 = new DataOutputStream(clientSocket.getOutputStream());
+                System.out.println("Assigning new thread for this client");
+                Thread thread = new HandleClients(inStream, outStream1);
                 thread.start();
             }
             finally{
-                if(inStream!= null){
-                    inStream.close();
-                }
-                if(outStream!= null){
-                    outStream.close();
-                }
+//                if(inStream!= null){
+//                    inStream.close();
+//                }
+//                if(outStream!= null){
+//                    outStream.close();
+//                }
             }
             //concurrentRequests++;
         }
 
     }
 
+    public static void main(String[] args) throws IOException {
+        WikiMediatorServer server = new WikiMediatorServer(5056, 5);
+    }
     /*
     public static void handleClients(BufferedReader inStream, PrintWriter outStream) throws IOException {
               Gson gson = new Gson();

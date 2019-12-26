@@ -6,23 +6,20 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import cpen221.mp3.wikimediator.WikiMediator;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
 
 public class HandleClients extends Thread{
 private final BufferedReader instream;
-private final PrintWriter outstream;
+private final DataOutputStream outstream;
 private String response;
 private String status;
 private String id;
 private String type;
 private int timeout;
-    HandleClients(BufferedReader instream, PrintWriter outstream){
+    HandleClients(BufferedReader instream, DataOutputStream outstream){
         this.instream = instream;
         this.outstream = outstream;
     }
@@ -55,7 +52,8 @@ private int timeout;
                             output1.addProperty("status", status);
                             output1.addProperty("response", response);
                             String out1 = output1.getAsString();
-                            outstream.println(out1);
+                            //outstream.println(out1);
+                            outstream.writeUTF(out1);
                             //concurrentRequests++;
                             break;
                         case "getPage":
@@ -68,7 +66,9 @@ private int timeout;
                             output2.addProperty("status", status);
                             output2.addProperty("response", response);
                             String out2 = output2.getAsString();
-                            outstream.write(out2);
+                            //outstream.write(out2);
+                            outstream.writeUTF(out2);
+
                             //concurrentRequests++;
                             break;
                         case "getConnectedPages":
@@ -83,7 +83,8 @@ private int timeout;
                             output3.addProperty("status", status);
                             output3.addProperty("response", response);
                             String out3 = output3.getAsString();
-                            outstream.write(out3);
+                            //outstream.write(out3);
+                            outstream.writeUTF(out3);
                             //concurrentRequests++;
                             break;
                         case "zeitgeist":
@@ -97,7 +98,8 @@ private int timeout;
                             output4.addProperty("status", status);
                             output4.addProperty("response", response);
                             String out4 = output4.getAsString();
-                            outstream.write(out4);
+                            //outstream.write(out4);
+                            outstream.writeUTF(out4);
                             //concurrentRequests++;
                             break;
                         case "trending":
@@ -111,7 +113,8 @@ private int timeout;
                             output5.addProperty("status", status);
                             output5.addProperty("response", response);
                             String out5 = output5.getAsString();
-                            outstream.write(out5);
+                            //outstream.write(out5);
+                            outstream.writeUTF(out5);
                             //concurrentRequests++;
                             break;
                         case "peakLoad30s":
@@ -124,7 +127,8 @@ private int timeout;
                             output6.addProperty("status", status);
                             output6.addProperty("response", response);
                             String out6 = output6.getAsString();
-                            outstream.write(out6);
+                            //outstream.write(out6);
+                            outstream.writeUTF(out6);
                             //concurrentRequests++;
                             break;
                         default:
@@ -136,7 +140,8 @@ private int timeout;
                             output7.addProperty("status", status);
                             output7.addProperty("response", response);
                             String out7 = output7.getAsString();
-                            outstream.write(out7);
+                            //outstream.write(out7);
+                            outstream.writeUTF(out7);
                             break;
                     }
                 }

@@ -1,8 +1,9 @@
 package cpen221.mp3.server;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
+import com.google.gson.JsonParser;
+
+import javax.sound.sampled.Port;
+import java.io.*;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.util.Scanner;
@@ -12,20 +13,28 @@ public class Client {
         try{
             Scanner scn = new Scanner(System.in);
 
-            InetAddress ip = InetAddress.getLocalHost();
-
             //establish the connection with the server port 5056?
             //why is the port number 5056?
-            Socket s = new Socket(ip, 5056);
 
-            DataInputStream inputstream = new DataInputStream(s.getInputStream());
+            //String port = scn.nextLine();
+            //Integer portNum = Integer.parseInt(port);
+            Socket s = new Socket("0.0.0.0", 5056);
+
+            String input ="{\"id\":\"1\",\"type\":\"simpleSearch\",\"query\":\"Frozen\",\"limit\":\"12\"}";
+
             DataOutputStream outputstream = new DataOutputStream(s.getOutputStream());
+            DataInputStream inputstream = new DataInputStream(s.getInputStream());
+
+
+//            JsonParser jsonParser = new JsonParser();
+//            File file = new File("C:\\jsonFiles\\input.json");
+//            FileReader reader = new FileReader(file);
+//            BufferedReader outputstream = new BufferedReader(reader);
 
             //exchange of information between the client and handle clients:
             while(true){
-                System.out.println(inputstream.readUTF());
-                String tosend = scn.nextLine();
-                outputstream.writeUTF(tosend);
+                String tosend = "Run";
+                outputstream.writeUTF(input);
 
                 if(tosend.equals("Exit")){
                     System.out.println("Closing this connection: " + s);
